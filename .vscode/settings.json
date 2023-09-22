@@ -4,4 +4,8 @@
         "GOOS": "js"
     },
     "go.buildTags": "js,wasm",
+    "cSpell.words": [
+        "localdb",
+        "upgradeneeded"
+    ],
 }
