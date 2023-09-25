@@ -33,7 +33,7 @@ func (d indexDB) createNewDB(this js.Value, p []js.Value) interface{} {
 	for _, o := range d.objects {
 
 		// Crea la tabla
-		newTable := res.Call("createObjectStore", o.Name, map[string]interface{}{"keyPath": o.PrimaryKeyName()})
+		newTable := res.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": o.PrimaryKeyName()})
 
 		// Crear un índices para búsqueda según campo
 		for _, f := range o.Fields {
