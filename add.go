@@ -2,18 +2,16 @@ package indexdb
 
 import (
 	"syscall/js"
-
-	"github.com/cdvelop/model"
 )
 
-func Add(objects []*model.Object) *indexDB {
+// run = RunBootData()
+func Add() *indexDB {
 
 	newDb := indexDB{
+		db_name: "localdb",
 		db:      js.Value{},
-		objects: objects,
+		objects: nil,
+		run:     nil,
 	}
-
-	newDb.initDataBase()
-
 	return &newDb
 }
