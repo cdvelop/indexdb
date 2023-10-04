@@ -1,17 +1,13 @@
 package indexdb
 
 import (
-	"fmt"
-
 	"github.com/cdvelop/model"
 )
 
 func (d *indexDB) CreateObjectsInDB(table_name string, data ...map[string]string) error {
 
-	fmt.Println("EJECUTANDO CreateObjectsInDB", table_name)
-
-	if !d.db.Truthy() {
-		return model.Error("ERROR DB ESTA NULA..", table_name)
+	if err := d.checkTableStatus("create", table_name); err != nil {
+		return err
 	}
 
 	// Obtiene una transacción de escritura usando d.res

@@ -1,5 +1,20 @@
 package indexdb
 
+import "github.com/cdvelop/model"
+
+func (d indexDB) checkTableStatus(operation, table_name string) error {
+
+	if !d.db.Truthy() {
+		return model.Error("error", operation, "variable db no definida en index db", table_name)
+	}
+
+	if !d.TableExist(table_name) {
+		return model.Error("error acción:", operation, ". tabla", table_name, "no existe en indexdb")
+	}
+
+	return nil
+}
+
 func (d indexDB) TableExist(table_name string) bool {
 
 	// Obtiene la lista de nombres de almacenes de objetos en la base de datos

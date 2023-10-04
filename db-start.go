@@ -31,19 +31,30 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 
 	for _, o := range d.objects {
 
+		// log("CREANDO TABLA: ", o.Table)
+
 		// if !d.TableExist(o.Table) {
 
-		log(o.Table, "keyPath:", o.PrimaryKeyName())
+		// log(o.Table, "keyPath:", o.PrimaryKeyName())
 		// Crea la tabla
-		newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": o.PrimaryKeyName()})
+		pk_name := o.PrimaryKeyName()
 
-		// Crear un índices para búsqueda según campo
-		for _, f := range o.Fields {
+		newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": pk_name})
 
-			if !f.NotRequiredInDB {
-				newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
+		// Crear un índices para búsqueda campos principales
+		principal_fields, err := o.GetFieldsByNames(o.NamePrincipalFields...)
+
+		if err == nil {
+			for _, f := range principal_fields {
+
+				if !f.NotRequiredInDB && f.Name != pk_name {
+					newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
+				}
 			}
 		}
+
+		// log("TABLA: ", o.Table, "CREADA.....")
+
 		// } else {
 		// log("TABLA:", o.Table, "YA EXISTE EN LA DB!!!")
 		// }
