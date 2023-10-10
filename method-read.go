@@ -89,7 +89,7 @@ func (d indexDB) ReadDataAsyncInDB(from_tables string, params []map[string]strin
 
 			dataMap := make(map[string]string)
 
-			log("DATA:", data)
+			log("READ DATA:", data)
 
 			keys := js.Global().Get("Object").Call("keys", data)
 
