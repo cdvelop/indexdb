@@ -47,7 +47,8 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 		if err == nil {
 			for _, f := range principal_fields {
 
-				if !f.NotRequiredInDB && f.Name != pk_name {
+				// if !f.NotRequiredInDB && f.Name != pk_name {
+				if !f.NotRequiredInDB {
 					newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
 				}
 			}
