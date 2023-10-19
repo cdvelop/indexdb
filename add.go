@@ -15,3 +15,7 @@ func Add() *indexDB {
 	}
 	return &newDb
 }
+
+func (indexDB) RunOnClientDB() bool { //true base de datos corre en el browser
+	return true
+}
