@@ -3,7 +3,7 @@ module github.com/cdvelop/indexdb
 go 1.20
 
 require (
-	github.com/cdvelop/model v0.0.58
+	github.com/cdvelop/model v0.0.59
 	github.com/cdvelop/timeclient v0.0.5
 )
 
