@@ -4,6 +4,7 @@ import (
 	"syscall/js"
 
 	"github.com/cdvelop/model"
+	"github.com/cdvelop/unixid"
 )
 
 type indexDB struct {
@@ -12,4 +13,6 @@ type indexDB struct {
 	objects []*model.Object
 
 	run model.Subsequently
+
+	*unixid.UnixID
 }
