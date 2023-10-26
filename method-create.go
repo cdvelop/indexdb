@@ -21,14 +21,21 @@ func (d *indexDB) CreateObjectsInDB(table_name string, data ...map[string]string
 	}
 
 	for _, items := range data {
-		new := make(map[string]interface{})
 
-		for k, v := range items {
-			new[k] = v
+		// chequear si tiene llave primaria el objeto
+		if _, id_exist := items[model.PREFIX_ID_NAME+table_name]; id_exist {
+
+			new := make(map[string]interface{})
+
+			for k, v := range items {
+				new[k] = v
+			}
+
+			// Inserta cada elemento en el almacén de objetos
+			store.Call("add", new)
+		} else {
+			d.Log("error data sin id en tabla:", table_name, items)
 		}
-
-		// Inserta cada elemento en el almacén de objetos
-		store.Call("add", new)
 
 	}
 

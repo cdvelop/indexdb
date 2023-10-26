@@ -25,7 +25,7 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 
 	err := d.open(&p[0], "NEW CREATE")
 	if err != nil {
-		log(err)
+		d.Log(err)
 		return nil
 	}
 
@@ -65,15 +65,15 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 	return nil
 }
 
-func (indexDB) showDbError(this js.Value, p []js.Value) interface{} {
-	log("indexDB Error", p[0])
+func (d indexDB) showDbError(this js.Value, p []js.Value) interface{} {
+	d.Log("indexDB Error", p[0])
 	return nil
 }
 
 func (d *indexDB) openExistingDB(this js.Value, p []js.Value) interface{} {
 	err := d.open(&p[0], "OPEN")
 	if err != nil {
-		log(err)
+		d.Log(err)
 		return nil
 	}
 
@@ -90,7 +90,7 @@ func (d *indexDB) open(p *js.Value, message string) error {
 		return model.Error("error no se logro establecer conexión", d.db_name, "indexdb")
 	}
 
-	log("***", message, "IndexDB Connection:", d.db_name, "OK ***")
+	d.Log("***", message, "IndexDB Connection:", d.db_name, "OK ***")
 
 	// DB : localdb Established, Engine: indexedDB
 	return nil

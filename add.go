@@ -9,7 +9,7 @@ import (
 )
 
 // run = RunBootData()
-func Add(u model.UserAuthNumber) (*indexDB, error) {
+func Add(u model.UserAuthNumber, l model.Logger) (*indexDB, error) {
 
 	newDb := indexDB{
 		db_name: "localdb",
@@ -17,6 +17,7 @@ func Add(u model.UserAuthNumber) (*indexDB, error) {
 		objects: nil,
 		run:     nil,
 		UnixID:  nil,
+		Logger:  l,
 	}
 
 	uid, err := unixid.NewHandler(&timeclient.TimeCLient{}, newDb, u)

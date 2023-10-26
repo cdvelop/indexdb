@@ -15,4 +15,6 @@ type indexDB struct {
 	run model.Subsequently
 
 	*unixid.UnixID
+
+	model.Logger
 }
