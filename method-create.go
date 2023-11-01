@@ -4,7 +4,7 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) CreateObjectsInDB(table_name string, data ...map[string]string) error {
+func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, data ...map[string]string) error {
 
 	if err := d.checkTableStatus("create", table_name); err != nil {
 		return err
@@ -29,6 +29,10 @@ func (d *indexDB) CreateObjectsInDB(table_name string, data ...map[string]string
 
 			for k, v := range items {
 				new[k] = v
+			}
+
+			if backup_required { // necesita respaldo en servidor
+				new["backup"] = false //estado backup = no respaldado
 			}
 
 			// Inserta cada elemento en el almacén de objetos
