@@ -95,9 +95,21 @@ func (d indexDB) ReadDataAsyncInDB(from_tables string, params []map[string]strin
 
 			for i := 0; i < keys.Length(); i++ {
 				key := keys.Index(i).String()
-				value := data.Get(key).String()
+				value_js := data.Get(key)
+
 				// log("key", key, "value", value)
-				dataMap[key] = value
+
+				if key == "blob" {
+					// url := CreateBlobURL(value_js)
+					// d.Log("BLOB FOUND:", value_js)
+					// d.Log("URL:", url)
+					dataMap["url"] = CreateBlobURL(value_js)
+				} else {
+					value := value_js.String()
+
+					dataMap[key] = value
+				}
+
 			}
 
 			results = append(results, dataMap)

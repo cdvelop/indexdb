@@ -4,7 +4,8 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, data ...map[string]string) error {
+// items support: []map[string]string or map[string]string
+func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, items any) error {
 
 	if err := d.checkTableStatus("create", table_name); err != nil {
 		return err
@@ -20,27 +21,39 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, dat
 		return model.Error("error no se logro abrir el almacén:", table_name, "en indexdb")
 	}
 
-	for _, items := range data {
+	for _, data := range dataConvert(items) {
 
-		// chequear si tiene llave primaria el objeto
-		if _, id_exist := items[model.PREFIX_ID_NAME+table_name]; id_exist {
+		pk_field := model.PREFIX_ID_NAME + table_name
 
-			new := make(map[string]interface{})
+		id, id_exist := data[pk_field]
+		if !id_exist {
 
-			for k, v := range items {
-				new[k] = v
+			if !backup_required { // si no requiere backup es un objeto sin id del servidor retornamos error
+				return model.Error("error data proveniente del servidor sin id en tabla:", table_name, data)
 			}
 
-			if backup_required { // necesita respaldo en servidor
-				new["backup"] = false //estado backup = no respaldado
-			}
+			//agregar id al objeto si este no existe
+			id = d.GetNewID() //id nuevo
 
-			// Inserta cada elemento en el almacén de objetos
-			store.Call("add", new)
-		} else {
-			d.Log("error data sin id en tabla:", table_name, items)
+			// d.Log("NUEVO ID GENERADO:", id)
+
+			// date, _ := unixid.UnixNanoToStringDate(id.(string))
+			// d.Log("SU FECHA ES:", date)
+
+			data[pk_field] = id
 		}
 
+		if backup_required { // necesita respaldo en servidor
+			data["backup"] = false //estado backup = no respaldado
+		}
+
+		// Inserta cada elemento en el almacén de objetos
+		store.Call("add", data)
+
+		// retornamos url temporal para acceder al archivo
+		if blob, exist := data["blob"]; exist {
+			data["url"] = CreateBlobURL(blob)
+		}
 	}
 
 	return nil
