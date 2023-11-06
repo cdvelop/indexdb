@@ -43,8 +43,20 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 
 		// Crear un índices para búsqueda campos principales
 		principal_fields, err := o.GetFieldsByNames(o.NamePrincipalFields...)
-
 		if err == nil {
+			// agregamos el campo primaryKey si no existe en el listado
+			var pk_found bool
+			for _, f := range principal_fields {
+				if f.Name == pk_name {
+					pk_found = true
+				}
+			}
+
+			if !pk_found {
+				pk_field, _ := o.FieldExist(pk_name)
+				principal_fields = append(principal_fields, pk_field)
+			}
+
 			for _, f := range principal_fields {
 
 				// if !f.NotRequiredInDB && f.Name != pk_name {

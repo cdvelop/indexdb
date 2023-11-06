@@ -21,6 +21,7 @@ func (d indexDB) ReadDataAsyncInDB(from_tables string, params []map[string]strin
 		sort_order    = "next"
 		where         string
 		args          string
+		id            string // Agregar variable para buscar por ID
 	)
 
 	transaction := d.db.Call("transaction", from_tables, "readonly")
@@ -41,11 +42,27 @@ func (d indexDB) ReadDataAsyncInDB(from_tables string, params []map[string]strin
 
 			case key == "ARGS":
 				args = value
+
+			case key == "ID": // Nueva opción para buscar por ID único
+				id = value
 			}
 		}
 	}
 
 	switch {
+
+	case id != "":
+
+		field_name := model.PREFIX_ID_NAME + from_tables
+
+		if err := fieldIndexOK(from_tables, field_name, store); err != nil {
+			callback(nil, err)
+			return
+		}
+
+		rangeObj := js.Global().Get("IDBKeyRange").Call("only", id)
+		index := store.Call("index", field_name)
+		cursorRequest = index.Call("openCursor", rangeObj)
 
 	// case where != "" && args != "":
 	// if err := fieldIndexOK(from_tables, where, store); err != nil {
@@ -96,9 +113,7 @@ func (d indexDB) ReadDataAsyncInDB(from_tables string, params []map[string]strin
 			for i := 0; i < keys.Length(); i++ {
 				key := keys.Index(i).String()
 				value_js := data.Get(key)
-
-				// log("key", key, "value", value)
-
+				// d.Log("key", key, "value", value_js)
 				if key == "blob" {
 					// url := CreateBlobURL(value_js)
 					// d.Log("BLOB FOUND:", value_js)

@@ -7,18 +7,9 @@ import (
 // items support: []map[string]string or map[string]string
 func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, items any) error {
 
-	if err := d.checkTableStatus("create", table_name); err != nil {
+	store, err := d.getStore("create", table_name)
+	if err != nil {
 		return err
-	}
-
-	// Obtiene una transacción de escritura usando d.res
-	transaction := d.db.Call("transaction", table_name, "readwrite")
-
-	// Obtiene el almacén de objetos
-	store := transaction.Call("objectStore", table_name)
-
-	if !store.Truthy() {
-		return model.Error("error no se logro abrir el almacén:", table_name, "en indexdb")
 	}
 
 	for _, data := range dataConvert(items) {
@@ -44,11 +35,14 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		}
 
 		if backup_required { // necesita respaldo en servidor
-			data["backup"] = false //estado backup = no respaldado
+			data["backup"] = "false" //estado backup = no respaldado
 		}
 
 		// Inserta cada elemento en el almacén de objetos
-		store.Call("add", data)
+		result := store.Call("add", data)
+		if result.IsNull() {
+			return model.Error("error al crear elemento en la db tabla:", table_name, "id:", id)
+		}
 
 		// retornamos url temporal para acceder al archivo
 		if blob, exist := data["blob"]; exist {
