@@ -1,6 +1,6 @@
 package indexdb
 
-func dataConvert(item interface{}) (all_data []map[string]interface{}) {
+func DataConvertToAny(item interface{}) (all_data []map[string]interface{}) {
 
 	convert := func(data map[string]string) map[string]interface{} {
 		newData := make(map[string]interface{})

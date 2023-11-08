@@ -12,7 +12,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		return err
 	}
 
-	for _, data := range dataConvert(items) {
+	for _, data := range DataConvertToAny(items) {
 
 		pk_field := model.PREFIX_ID_NAME + table_name
 

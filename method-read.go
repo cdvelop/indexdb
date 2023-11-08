@@ -7,82 +7,89 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d indexDB) ReadDataAsyncInDB(from_tables string, params []map[string]string, callback func([]map[string]string, error)) {
+func (d *indexDB) ReadStringDataAsyncInDB(r model.ReadDBParams, callback func([]map[string]string, error)) {
 
-	if err := d.checkTableStatus("read", from_tables); err != nil {
-		callback(nil, err)
+	d.readData(r, true, func(data []map[string]string, err error) {
+		callback(data, err)
+	}, nil)
+
+}
+
+func (d *indexDB) ReadAnyDataAsyncInDB(r model.ReadDBParams, callback func([]map[string]interface{}, error)) {
+
+	d.readData(r, false, nil, func(data []map[string]interface{}, err error) {
+		callback(data, err)
+	})
+}
+
+func (d *indexDB) readData(r model.ReadDBParams, string_return bool, outString func([]map[string]string, error), outAny func([]map[string]interface{}, error)) {
+
+	if err := d.checkTableStatus("read", r.FROM_TABLE); err != nil {
+		if string_return {
+			outString(nil, err)
+		} else {
+			outAny(nil, err)
+		}
 		return
 	}
 
 	var (
-		results       = []map[string]string{}
-		order_by      string
-		cursorRequest js.Value
-		sort_order    = "next"
-		where         string
-		args          string
-		id            string // Agregar variable para buscar por ID
+		results_string = []map[string]string{}
+		results_any    = []map[string]interface{}{}
+		cursorRequest  js.Value
+		sort_order     = "next"
 	)
 
-	transaction := d.db.Call("transaction", from_tables, "readonly")
-	store := transaction.Call("objectStore", from_tables)
+	if r.SORT_DESC {
+		sort_order = "prev"
+	}
 
-	for _, items := range params {
-		for key, value := range items {
+	// transaction := d.db.Call("transaction", r.FROM_TABLE, "readonly")
 
-			switch {
-			case key == "ORDER_BY":
-				order_by = value
+	// store := transaction.Call("objectStore", r.FROM_TABLE)
 
-			case key == "SORT" && value == "DESC":
-				sort_order = "prev"
-
-			case key == "WHERE":
-				where = value
-
-			case key == "ARGS":
-				args = value
-
-			case key == "ID": // Nueva opción para buscar por ID único
-				id = value
-			}
+	// Obtener el almacén
+	store, err := d.getStore("read", r.FROM_TABLE)
+	if err != nil {
+		if string_return {
+			outString(nil, err)
+		} else {
+			outAny(nil, err)
 		}
+		return
 	}
 
 	switch {
 
-	case id != "":
+	case r.ID != "":
 
-		field_name := model.PREFIX_ID_NAME + from_tables
+		field_name := model.PREFIX_ID_NAME + r.FROM_TABLE
 
-		if err := fieldIndexOK(from_tables, field_name, store); err != nil {
-			callback(nil, err)
+		if err := fieldIndexOK(r.FROM_TABLE, field_name, store); err != nil {
+			if string_return {
+				outString(nil, err)
+			} else {
+				outAny(nil, err)
+			}
 			return
 		}
 
-		rangeObj := js.Global().Get("IDBKeyRange").Call("only", id)
+		rangeObj := js.Global().Get("IDBKeyRange").Call("only", r.ID)
 		index := store.Call("index", field_name)
 		cursorRequest = index.Call("openCursor", rangeObj)
 
-	// case where != "" && args != "":
-	// if err := fieldIndexOK(from_tables, where, store); err != nil {
-	// 	callback(nil, err)
-	// 	return
-	// }
-	// index := store.Call("index", where)
+	case r.ORDER_BY != "":
 
-	// rangeObj := js.Global().Get("IDBKeyRange").Call("only", args)
-
-	// cursorRequest = index.Call("openCursor", rangeObj)
-
-	case order_by != "":
-
-		if err := fieldIndexOK(from_tables, order_by, store); err != nil {
-			callback(nil, err)
+		if err := fieldIndexOK(r.FROM_TABLE, r.ORDER_BY, store); err != nil {
+			if string_return {
+				outString(nil, err)
+			} else {
+				outAny(nil, err)
+			}
 			return
 		}
 
-		index := store.Call("index", order_by)
+		index := store.Call("index", r.ORDER_BY)
 		// El valor nil como clave inicial significa que el cursor comenzará desde el primer registro en orden descendente y luego avanzará hacia registros posteriores en ese orden
 		cursorRequest = index.Call("openCursor", nil, sort_order)
 	default:
@@ -97,14 +104,15 @@ func (d indexDB) ReadDataAsyncInDB(from_tables string, params []map[string]strin
 
 			data := cursor.Get("value")
 
-			if where != "" && args != "" {
-				if !strings.Contains(data.Get(where).String(), args) {
+			for _, where := range r.WHERE {
+				if !strings.Contains(data.Get(where).String(), r.SEARCH_ARGUMENT) {
 					cursor.Call("continue")
 					return nil
 				}
 			}
 
-			dataMap := make(map[string]string)
+			data_out_any := make(map[string]interface{})
+			data_out_string := map[string]string{}
 
 			// log("READ DATA:", data)
 
@@ -118,43 +126,47 @@ func (d indexDB) ReadDataAsyncInDB(from_tables string, params []map[string]strin
 					// url := CreateBlobURL(value_js)
 					// d.Log("BLOB FOUND:", value_js)
 					// d.Log("URL:", url)
-					dataMap["url"] = CreateBlobURL(value_js)
-				} else {
-					value := value_js.String()
+					data_out_string["url"] = CreateBlobURL(value_js)
 
-					dataMap[key] = value
+					if !string_return {
+						data_out_any["url"] = CreateBlobURL(value_js)
+						data_out_any[key] = value_js
+					}
+
+				} else {
+
+					if string_return {
+						data_out_string[key] = value_js.String()
+					} else {
+						data_out_any[key] = value_js
+					}
+
 				}
 
 			}
 
-			results = append(results, dataMap)
+			if string_return {
+				results_string = append(results_string, data_out_string)
+
+			} else {
+				results_any = append(results_any, data_out_any)
+			}
 
 			cursor.Call("continue")
 		} else {
-			callback(results, nil) // log("Fin de los datos.")
+
+			if string_return {
+				outString(results_string, nil) // log("Fin de los datos.")
+			} else {
+				outAny(results_any, nil) // log("Fin de los datos.")
+			}
+
 		}
 		return nil
 	}))
+
 }
 
-func fieldIndexOK(table, field_name string, store js.Value) error {
-
-	// Verificar si el índice existe en la tabla.
-	indexNames := store.Get("indexNames")
-
-	indexSet := make(map[string]bool)
-	for i := 0; i < indexNames.Length(); i++ {
-		indexSet[indexNames.Index(i).String()] = true
-	}
-
-	// Verificar si el índice existe en la tabla.
-	if !indexSet[field_name] {
-		return model.Error("El índice:", field_name, "no existe en la tabla:", table)
-	}
-
-	return nil
-}
-
-func (d *indexDB) ReadObjectsInDB(from_tables string, data ...map[string]string) ([]map[string]string, error) {
+func (d *indexDB) ReadObjectsInDB(FROM_TABLE string, data ...map[string]string) ([]map[string]string, error) {
 	return nil, model.Error("error ReadObjectsInDB no implementado en indexDB")
 }

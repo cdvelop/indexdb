@@ -9,25 +9,28 @@ import (
 )
 
 // run = RunBootData()
-func Add(u model.UserAuthNumber, l model.Logger) (*indexDB, error) {
+func Add(u model.UserAuthNumber, h *model.Handlers) error {
 
 	newDb := indexDB{
 		db_name: "localdb",
 		db:      js.Value{},
-		objects: nil,
+		http:    h,
+		objects: nil, //add in CreateTablesInDB func
 		run:     nil,
 		UnixID:  nil,
-		Logger:  l,
+		Logger:  h.Logger,
 	}
+
+	h.DataBaseAdapter = &newDb
 
 	uid, err := unixid.NewHandler(&timeclient.TimeCLient{}, newDb, u)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	newDb.UnixID = uid
 
-	return &newDb, nil
+	return nil
 }
 
 func (indexDB) RunOnClientDB() bool { //true base de datos corre en el browser

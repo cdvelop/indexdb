@@ -10,6 +10,7 @@ func (i *indexDB) CreateTablesInDB(objects []*model.Object, action model.Subsequ
 
 	i.run = action
 	i.objects = objects
+
 	// Accede a la base de datos
 	db := js.Global().Get("indexedDB").Call("open", i.db_name)
 

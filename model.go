@@ -10,6 +10,9 @@ import (
 type indexDB struct {
 	db_name string
 	db      js.Value
+
+	http model.HttpAdapter
+
 	objects []*model.Object
 
 	run model.Subsequently
@@ -17,4 +20,16 @@ type indexDB struct {
 	*unixid.UnixID
 
 	model.Logger
+
+	backups       []backup
+	backupRespond func(error)
+
+	remaining_reading int
+}
+
+type backup struct {
+	table    string
+	data     []map[string]interface{}
+	finished bool
+	err      error
 }
