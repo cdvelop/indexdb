@@ -4,13 +4,7 @@ func (d *indexDB) prepareToSendData() {
 
 	for _, b := range d.backups {
 
-		o, err := d.GetObjectByTableName(b.table)
-		if err != nil {
-			d.backupRespond(err)
-			return
-		}
-
-		d.Log("OBJETO", o.Name)
+		d.Log("OBJETO", b.object.Name)
 		// var o *model.Object
 		// for _, v := range d.objects {
 		// 	if v.Table == o.Table {
@@ -21,7 +15,7 @@ func (d *indexDB) prepareToSendData() {
 
 		for _, item := range b.data {
 
-			if b.table == "file" {
+			if b.object.Table == "file" {
 				d.Log("TIPO FILE ENVIÓ FORM DATA", item)
 
 				// d.http.SendFormData()

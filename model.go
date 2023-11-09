@@ -24,11 +24,11 @@ type indexDB struct {
 	backups       []backup
 	backupRespond func(error)
 
-	remaining_reading int
+	remaining int
 }
 
 type backup struct {
-	table    string
+	object   *model.Object
 	data     []map[string]interface{}
 	finished bool
 	err      error

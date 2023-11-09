@@ -16,7 +16,7 @@ func (d *indexDB) UpdateObjectsInDB(table_name string, all_data ...map[string]st
 		// Obtener el ID del objeto
 		id, ok := obj[model.PREFIX_ID_NAME+table_name].(string)
 		if !ok {
-			return model.Error("objeto invalido sin ID", obj)
+			return model.Error("objeto invalido sin ID para actualizar", obj)
 		}
 
 		// Guardar los cambios
