@@ -18,7 +18,7 @@ func (d *indexDB) prepareToSendData() {
 			if b.object.Table == "file" {
 				d.Log("TIPO FILE ENVIÓ FORM DATA", item)
 
-				// d.http.SendFormData()
+				// d.http.SendAllRequests()
 
 			} else {
 				d.Log("ENVIÓ NORMAL JSON", item)

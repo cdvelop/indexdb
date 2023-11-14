@@ -16,7 +16,7 @@ func Add(u model.UserAuthNumber, h *model.Handlers) error {
 		db:      js.Value{},
 		http:    h,
 		objects: nil, //add in CreateTablesInDB func
-		run:     nil,
+		result:  nil,
 		UnixID:  nil,
 		Logger:  h.Logger,
 	}

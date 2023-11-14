@@ -6,9 +6,9 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) CreateTablesInDB(objects []*model.Object, action model.Subsequently) error {
+func (d *indexDB) CreateTablesInDB(objects []*model.Object, result func(error)) {
 
-	d.run = action
+	d.result = result
 	d.objects = objects
 
 	// Accede a la base de datos
@@ -19,14 +19,13 @@ func (d *indexDB) CreateTablesInDB(objects []*model.Object, action model.Subsequ
 	db.Call("addEventListener", "success", js.FuncOf(d.openExistingDB))
 	db.Call("addEventListener", "upgradeneeded", js.FuncOf(d.upgradeneeded))
 
-	return nil
 }
 
 func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 
 	err := d.open(&p[0], "NEW CREATE")
 	if err != nil {
-		d.Log(err)
+		d.result(err)
 		return nil
 	}
 
@@ -90,11 +89,11 @@ func (d indexDB) showDbError(this js.Value, p []js.Value) interface{} {
 func (d *indexDB) openExistingDB(this js.Value, p []js.Value) interface{} {
 	err := d.open(&p[0], "OPEN")
 	if err != nil {
-		d.Log(err)
+		d.result(err)
 		return nil
 	}
 
-	d.run.ActionExecutedLater()
+	d.result(nil)
 
 	return nil
 }

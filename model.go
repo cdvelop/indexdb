@@ -11,11 +11,11 @@ type indexDB struct {
 	db_name string
 	db      js.Value
 
-	http model.HttpAdapter
+	http model.FetchAdapter
 
 	objects []*model.Object
 
-	run model.Subsequently
+	result func(error)
 
 	*unixid.UnixID
 
