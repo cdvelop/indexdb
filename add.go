@@ -4,26 +4,25 @@ import (
 	"syscall/js"
 
 	"github.com/cdvelop/model"
-	"github.com/cdvelop/timeclient"
 	"github.com/cdvelop/unixid"
 )
 
 // run = RunBootData()
-func Add(u model.UserAuthNumber, h *model.Handlers) error {
+func Add(h *model.Handlers) error {
 
 	newDb := indexDB{
-		db_name: "localdb",
-		db:      js.Value{},
-		http:    h,
-		objects: nil, //add in CreateTablesInDB func
-		result:  nil,
-		UnixID:  nil,
-		Logger:  h.Logger,
+		db_name:        "localdb",
+		db:             js.Value{},
+		http:           h,
+		ObjectsHandler: h,
+		result:         nil,
+		UnixID:         nil,
+		Logger:         h.Logger,
 	}
 
 	h.DataBaseAdapter = &newDb
 
-	uid, err := unixid.NewHandler(&timeclient.TimeCLient{}, newDb, u)
+	uid, err := unixid.NewHandler(h.TimeAdapter, newDb, h.AuthAdapter)
 	if err != nil {
 		return err
 	}

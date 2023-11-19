@@ -4,7 +4,7 @@ func (d *indexDB) prepareToSendData() {
 
 	for _, b := range d.backups {
 
-		d.Log("OBJETO", b.object.Name)
+		d.Log("OBJETO", b.object.ObjectName)
 		// var o *model.Object
 		// for _, v := range d.objects {
 		// 	if v.Table == o.Table {

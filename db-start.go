@@ -9,7 +9,6 @@ import (
 func (d *indexDB) CreateTablesInDB(objects []*model.Object, result func(error)) {
 
 	d.result = result
-	d.objects = objects
 
 	// Accede a la base de datos
 	db := js.Global().Get("indexedDB").Call("open", d.db_name)
@@ -29,52 +28,55 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 		return nil
 	}
 
-	for _, o := range d.objects {
+	for _, o := range d.GetObjects() {
 
-		d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
-		d.Log("CAMPOS DB: ", len(o.Fields))
-		d.Log("NOMBRES PRINCIPALES:", len(o.PrincipalFieldsName), o.PrincipalFieldsName)
-		d.Log(" ")
-		if len(o.Fields) != 0 {
+		if !o.NoAddObjectInDB {
 
-			// if !d.TableExist(o.Table) {
+			d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
+			d.Log("CAMPOS DB: ", len(o.Fields))
+			d.Log("NOMBRES PRINCIPALES:", len(o.PrincipalFieldsName), o.PrincipalFieldsName)
+			d.Log(" ")
+			if len(o.Fields) != 0 {
 
-			// log(o.Table, "keyPath:", o.PrimaryKeyName())
-			// Crea la tabla
-			pk_name := o.PrimaryKeyName()
+				// if !d.TableExist(o.Table) {
 
-			newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": pk_name})
+				// log(o.Table, "keyPath:", o.PrimaryKeyName())
+				// Crea la tabla
+				pk_name := o.PrimaryKeyName()
 
-			// Crear un índices para búsqueda campos principales
-			principal_fields, err := o.GetFieldsByNames(o.PrincipalFieldsName...)
-			if err == nil {
-				// agregamos el campo primaryKey si no existe en el listado
-				var pk_found bool
-				for _, f := range principal_fields {
-					if f.Name == pk_name {
-						pk_found = true
+				newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": pk_name})
+
+				// Crear un índices para búsqueda campos principales
+				principal_fields, err := o.GetFieldsByNames(o.PrincipalFieldsName...)
+				if err == nil {
+					// agregamos el campo primaryKey si no existe en el listado
+					var pk_found bool
+					for _, f := range principal_fields {
+						if f.Name == pk_name {
+							pk_found = true
+						}
+					}
+
+					if !pk_found {
+						pk_field, _ := o.FieldExist(pk_name)
+						principal_fields = append(principal_fields, pk_field)
+					}
+
+					for _, f := range principal_fields {
+
+						// if !f.NotRequiredInDB && f.Name != pk_name {
+						if !f.NotRequiredInDB {
+							newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
+						}
 					}
 				}
 
-				if !pk_found {
-					pk_field, _ := o.FieldExist(pk_name)
-					principal_fields = append(principal_fields, pk_field)
-				}
+				// log("TABLA: ", o.Table, "CREADA.....")
 
-				for _, f := range principal_fields {
-
-					// if !f.NotRequiredInDB && f.Name != pk_name {
-					if !f.NotRequiredInDB {
-						newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
-					}
-				}
+				// } else {
+				// log("TABLA:", o.Table, "YA EXISTE EN LA DB!!!")
+				// }
 			}
-
-			// log("TABLA: ", o.Table, "CREADA.....")
-
-			// } else {
-			// log("TABLA:", o.Table, "YA EXISTE EN LA DB!!!")
-			// }
 		}
 	}
 
