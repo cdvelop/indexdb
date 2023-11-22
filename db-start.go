@@ -29,53 +29,21 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 	}
 
 	for _, o := range d.GetObjects() {
-
 		if !o.NoAddObjectInDB {
-
 			d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
-			d.Log("CAMPOS DB: ", len(o.Fields))
-			d.Log("NOMBRES PRINCIPALES:", len(o.PrincipalFieldsName), o.PrincipalFieldsName)
-			d.Log(" ")
 			if len(o.Fields) != 0 {
 
-				// if !d.TableExist(o.Table) {
-
-				// log(o.Table, "keyPath:", o.PrimaryKeyName())
-				// Crea la tabla
 				pk_name := o.PrimaryKeyName()
 
 				newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": pk_name})
 
-				// Crear un índices para búsqueda campos principales
-				principal_fields, err := o.GetFieldsByNames(o.PrincipalFieldsName...)
-				if err == nil {
-					// agregamos el campo primaryKey si no existe en el listado
-					var pk_found bool
-					for _, f := range principal_fields {
-						if f.Name == pk_name {
-							pk_found = true
-						}
-					}
+				for _, f := range o.Fields {
 
-					if !pk_found {
-						pk_field, _ := o.FieldExist(pk_name)
-						principal_fields = append(principal_fields, pk_field)
-					}
-
-					for _, f := range principal_fields {
-
-						// if !f.NotRequiredInDB && f.Name != pk_name {
-						if !f.NotRequiredInDB {
-							newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
-						}
+					if !f.NotRequiredInDB {
+						// Crear un índices para búsqueda campos principales
+						newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
 					}
 				}
-
-				// log("TABLA: ", o.Table, "CREADA.....")
-
-				// } else {
-				// log("TABLA:", o.Table, "YA EXISTE EN LA DB!!!")
-				// }
 			}
 		}
 	}
