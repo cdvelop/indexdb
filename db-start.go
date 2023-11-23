@@ -6,7 +6,7 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) CreateTablesInDB(objects []*model.Object, result func(error)) {
+func (d *indexDB) CreateTablesInDB(objects []*model.Object, result func(err string)) {
 
 	d.result = result
 
@@ -23,7 +23,7 @@ func (d *indexDB) CreateTablesInDB(objects []*model.Object, result func(error)) 
 func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 
 	err := d.open(&p[0], "NEW CREATE")
-	if err != nil {
+	if err != "" {
 		d.result(err)
 		return nil
 	}
@@ -58,26 +58,26 @@ func (d indexDB) showDbError(this js.Value, p []js.Value) interface{} {
 
 func (d *indexDB) openExistingDB(this js.Value, p []js.Value) interface{} {
 	err := d.open(&p[0], "OPEN")
-	if err != nil {
+	if err != "" {
 		d.result(err)
 		return nil
 	}
 
-	d.result(nil)
+	d.result("")
 
 	return nil
 }
 
-func (d *indexDB) open(p *js.Value, message string) error {
+func (d *indexDB) open(p *js.Value, message string) (err string) {
 
 	d.db = p.Get("target").Get("result")
 
 	if !d.db.Truthy() {
-		return model.Error("error no se logro establecer conexión", d.db_name, "indexdb")
+		return "error no se logro establecer conexión " + d.db_name + " indexdb"
 	}
 
 	d.Log("***", message, "IndexDB Connection:", d.db_name, "OK ***")
 
 	// DB : localdb Established, Engine: indexedDB
-	return nil
+	return ""
 }

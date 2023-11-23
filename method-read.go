@@ -7,24 +7,24 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) ReadStringDataAsyncInDB(r model.ReadDBParams, callback func([]map[string]string, error)) {
+func (d *indexDB) ReadStringDataAsyncInDB(r model.ReadDBParams, callback func(result []map[string]string, err string)) {
 
-	d.readData(r, true, func(data []map[string]string, err error) {
+	d.readData(r, true, func(data []map[string]string, err string) {
 		callback(data, err)
 	}, nil)
 
 }
 
-func (d *indexDB) ReadAnyDataAsyncInDB(r model.ReadDBParams, callback func([]map[string]interface{}, error)) {
+func (d *indexDB) ReadAnyDataAsyncInDB(r model.ReadDBParams, callback func(result []map[string]interface{}, err string)) {
 
-	d.readData(r, false, nil, func(data []map[string]interface{}, err error) {
+	d.readData(r, false, nil, func(data []map[string]interface{}, err string) {
 		callback(data, err)
 	})
 }
 
-func (d *indexDB) readData(r model.ReadDBParams, string_return bool, outString func([]map[string]string, error), outAny func([]map[string]interface{}, error)) {
+func (d *indexDB) readData(r model.ReadDBParams, string_return bool, outString func(result []map[string]string, err string), outAny func(result []map[string]interface{}, err string)) {
 
-	if err := d.checkTableStatus("read", r.FROM_TABLE); err != nil {
+	if err := d.checkTableStatus("read", r.FROM_TABLE); err != "" {
 		if string_return {
 			outString(nil, err)
 		} else {
@@ -50,7 +50,7 @@ func (d *indexDB) readData(r model.ReadDBParams, string_return bool, outString f
 
 	// Obtener el almacén
 	store, err := d.getStore("read", r.FROM_TABLE)
-	if err != nil {
+	if err != "" {
 		if string_return {
 			outString(nil, err)
 		} else {
@@ -65,7 +65,7 @@ func (d *indexDB) readData(r model.ReadDBParams, string_return bool, outString f
 
 		field_name := model.PREFIX_ID_NAME + r.FROM_TABLE
 
-		if err := fieldIndexOK(r.FROM_TABLE, field_name, store); err != nil {
+		if err := fieldIndexOK(r.FROM_TABLE, field_name, store); err != "" {
 			if string_return {
 				outString(nil, err)
 			} else {
@@ -80,7 +80,7 @@ func (d *indexDB) readData(r model.ReadDBParams, string_return bool, outString f
 
 	case r.ORDER_BY != "":
 
-		if err := fieldIndexOK(r.FROM_TABLE, r.ORDER_BY, store); err != nil {
+		if err := fieldIndexOK(r.FROM_TABLE, r.ORDER_BY, store); err != "" {
 			if string_return {
 				outString(nil, err)
 			} else {
@@ -156,9 +156,9 @@ func (d *indexDB) readData(r model.ReadDBParams, string_return bool, outString f
 		} else {
 
 			if string_return {
-				outString(results_string, nil) // log("Fin de los datos.")
+				outString(results_string, "") // log("Fin de los datos.")
 			} else {
-				outAny(results_any, nil) // log("Fin de los datos.")
+				outAny(results_any, "") // log("Fin de los datos.")
 			}
 
 		}
@@ -167,6 +167,6 @@ func (d *indexDB) readData(r model.ReadDBParams, string_return bool, outString f
 
 }
 
-func (d *indexDB) ReadObjectsInDB(FROM_TABLE string, data ...map[string]string) ([]map[string]string, error) {
-	return nil, model.Error("error ReadObjectsInDB no implementado en indexDB")
+func (d *indexDB) ReadObjectsInDB(FROM_TABLE string, data ...map[string]string) (result []map[string]string, err string) {
+	return nil, "error ReadObjectsInDB no implementado en indexDB"
 }

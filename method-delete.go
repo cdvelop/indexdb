@@ -2,10 +2,10 @@ package indexdb
 
 import "github.com/cdvelop/model"
 
-func (d indexDB) DeleteObjectsInDB(table_name string, all_data ...map[string]string) error {
+func (d indexDB) DeleteObjectsInDB(table_name string, all_data ...map[string]string) (err string) {
 
 	store, err := d.getStore("delete", table_name)
-	if err != nil {
+	if err != "" {
 		return err
 	}
 
@@ -15,14 +15,14 @@ func (d indexDB) DeleteObjectsInDB(table_name string, all_data ...map[string]str
 			result := store.Call("delete", id)
 
 			if result.IsNull() {
-				return model.Error("error al eliminar en la tabla:", table_name)
+				return "error al eliminar en la tabla: " + table_name
 			}
 
 		} else {
-			return model.Error("error en datos enviados a eliminar, id no encontrado tabla:", table_name)
+			return "error en datos enviados a eliminar, id no encontrado tabla: " + table_name
 		}
 
 	}
 
-	return nil
+	return ""
 }

@@ -8,7 +8,7 @@ import (
 )
 
 // run = RunBootData()
-func Add(h *model.Handlers) error {
+func Add(h *model.Handlers) (err string) {
 
 	newDb := indexDB{
 		db_name:        "localdb",
@@ -23,13 +23,13 @@ func Add(h *model.Handlers) error {
 	h.DataBaseAdapter = &newDb
 
 	uid, err := unixid.NewHandler(h.TimeAdapter, newDb, h.AuthAdapter)
-	if err != nil {
+	if err != "" {
 		return err
 	}
 
 	newDb.UnixID = uid
 
-	return nil
+	return ""
 }
 
 func (indexDB) RunOnClientDB() bool { //true base de datos corre en el browser

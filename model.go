@@ -15,14 +15,14 @@ type indexDB struct {
 
 	model.ObjectsHandler
 
-	result func(error)
+	result func(err string)
 
 	*unixid.UnixID
 
 	model.Logger
 
 	backups       []backup
-	backupRespond func(error)
+	backupRespond func(err string)
 
 	remaining int
 }
@@ -31,5 +31,5 @@ type backup struct {
 	object   *model.Object
 	data     []map[string]interface{}
 	finished bool
-	err      error
+	err      string
 }

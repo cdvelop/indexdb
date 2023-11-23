@@ -5,10 +5,10 @@ import (
 )
 
 // items support: []map[string]string or map[string]string
-func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, items any) error {
+func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, items any) (err string) {
 
 	store, err := d.getStore("create", table_name)
-	if err != nil {
+	if err != "" {
 		return err
 	}
 
@@ -20,7 +20,9 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		if !id_exist {
 
 			if !backup_required { // si no requiere backup es un objeto sin id del servidor retornamos error
-				return model.Error("error data proveniente del servidor sin id en tabla:", table_name, data)
+				err := "error data proveniente del servidor sin id en tabla: " + table_name
+				d.Log(err, data)
+				return err
 			}
 
 			//agregar id al objeto si este no existe
@@ -41,7 +43,8 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		// Inserta cada elemento en el almacén de objetos
 		result := store.Call("add", data)
 		if result.IsNull() {
-			return model.Error("error al crear elemento en la db tabla:", table_name, "id:", id)
+
+			return "error al crear elemento en la db tabla: " + table_name + " id: " + id.(string)
 		}
 
 		// retornamos url temporal para acceder al archivo
@@ -50,5 +53,5 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		}
 	}
 
-	return nil
+	return ""
 }

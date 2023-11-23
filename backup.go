@@ -2,7 +2,7 @@ package indexdb
 
 import "github.com/cdvelop/model"
 
-func (d *indexDB) BackupDataBase(callback func(error)) {
+func (d *indexDB) BackupDataBase(callback func(err string)) {
 	// reset valores a 0
 	d.backups = []backup{}
 	d.backupRespond = callback
@@ -16,7 +16,7 @@ func (d *indexDB) BackupDataBase(callback func(error)) {
 
 	d.Log("RESPALDANDO BASE DE DATOS INDEX DB")
 
-	// callback(model.Error("NO RESPALDADO AUN"))
+	// callback("NO RESPALDADO AUN"))
 
 	d.addNewObjectsCreated()
 
@@ -32,8 +32,8 @@ func (d *indexDB) addNewObjectsCreated() {
 				FROM_TABLE:      table,
 				WHERE:           []string{"backup"},
 				SEARCH_ARGUMENT: "false",
-			}, func(data []map[string]interface{}, err error) {
-				if err != nil {
+			}, func(data []map[string]interface{}, err string) {
+				if err != "" {
 					d.Log(err)
 					return
 				}
@@ -45,7 +45,7 @@ func (d *indexDB) addNewObjectsCreated() {
 						object:   o,
 						data:     data,
 						finished: false,
-						err:      nil,
+						err:      "",
 					}
 
 					d.backups = append(d.backups, new)
@@ -75,7 +75,7 @@ func (d *indexDB) finishReadData(index int, table string) {
 
 		} else {
 			d.Log("BACKUP OK NADA PARA ENVIAR")
-			d.backupRespond(nil)
+			d.backupRespond("")
 		}
 	}
 }

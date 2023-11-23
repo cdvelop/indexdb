@@ -2,11 +2,9 @@ package indexdb
 
 import (
 	"syscall/js"
-
-	"github.com/cdvelop/model"
 )
 
-func fieldIndexOK(table, field_name string, store *js.Value) error {
+func fieldIndexOK(table, field_name string, store *js.Value) (err string) {
 
 	// Verificar si el índice existe en la tabla.
 	indexNames := store.Get("indexNames")
@@ -18,8 +16,8 @@ func fieldIndexOK(table, field_name string, store *js.Value) error {
 
 	// Verificar si el índice existe en la tabla.
 	if !indexSet[field_name] {
-		return model.Error("El índice:", field_name, "no existe en la tabla:", table)
+		return "El índice: " + field_name + "no existe en la tabla:" + table
 	}
 
-	return nil
+	return ""
 }

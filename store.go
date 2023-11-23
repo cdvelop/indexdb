@@ -2,14 +2,12 @@ package indexdb
 
 import (
 	"syscall/js"
-
-	"github.com/cdvelop/model"
 )
 
 // action create,read, delete, update
-func (d *indexDB) getStore(action, table_name string) (*js.Value, error) {
+func (d *indexDB) getStore(action, table_name string) (st *js.Value, err string) {
 
-	if err := d.checkTableStatus(action, table_name); err != nil {
+	if err := d.checkTableStatus(action, table_name); err != "" {
 		return nil, err
 	}
 
@@ -25,8 +23,8 @@ func (d *indexDB) getStore(action, table_name string) (*js.Value, error) {
 	store := transaction.Call("objectStore", table_name)
 
 	if !store.Truthy() {
-		return nil, model.Error("error no se logro abrir el almacén:", table_name, "db para la acción", action)
+		return nil, "error no se logro abrir el almacén: " + table_name + " db para la acción " + action
 	}
 
-	return &store, nil
+	return &store, ""
 }
