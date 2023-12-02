@@ -7,7 +7,7 @@ func (d indexDB) checkTableStatus(operation, table_name string) (err string) {
 	}
 
 	if !d.TableExist(table_name) {
-		return "error acción: " + operation + ". tabla" + table_name + "no existe en indexdb"
+		return "error acción: " + operation + ". tabla " + table_name + " no existe en indexdb"
 	}
 
 	return ""
