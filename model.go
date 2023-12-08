@@ -25,6 +25,10 @@ type indexDB struct {
 	backupRespond func(err string)
 
 	remaining int
+
+	//READ NEW
+	cursor     js.Value
+	readParams model.ReadParams
 }
 
 type backup struct {

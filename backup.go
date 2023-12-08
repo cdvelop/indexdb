@@ -28,22 +28,24 @@ func (d *indexDB) addNewObjectsCreated() {
 		if len(o.Fields) != 0 {
 			index := i // Captura el valor de i en esta iteración
 			table := o.Table
-			d.ReadAnyDataAsyncInDB(model.ReadDBParams{
+			d.ReadAsyncDataDB(model.ReadParams{
 				FROM_TABLE:      table,
 				WHERE:           []string{"backup"},
 				SEARCH_ARGUMENT: "false",
-			}, func(data []map[string]interface{}, err string) {
-				if err != "" {
-					d.Log(err)
+				RETURN_ANY:      true,
+			}, func(r model.ReadResult) {
+
+				if r.Error != "" {
+					d.Log(r.Error)
 					return
 				}
 
-				if len(data) != 0 {
-					d.Log(data)
+				if len(r.DataAny) != 0 {
+					d.Log(r.DataAny)
 
 					new := backup{
 						object:   o,
-						data:     data,
+						data:     r.DataAny,
 						finished: false,
 						err:      "",
 					}

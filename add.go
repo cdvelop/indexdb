@@ -22,7 +22,7 @@ func Add(h *model.Handlers) (err string) {
 
 	h.DataBaseAdapter = &newDb
 
-	uid, err := unixid.NewHandler(h.TimeAdapter, newDb, h.AuthAdapter)
+	uid, err := unixid.NewHandler(h.TimeAdapter, newDb, h.AuthFrontendAdapter)
 	if err != "" {
 		return err
 	}
