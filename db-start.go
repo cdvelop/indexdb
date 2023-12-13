@@ -30,7 +30,7 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 
 	for _, o := range d.GetObjects() {
 		if !o.NoAddObjectInDB {
-			d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
+			// d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
 			if len(o.Fields) != 0 {
 
 				pk_name := o.PrimaryKeyName()
@@ -73,11 +73,10 @@ func (d *indexDB) open(p *js.Value, message string) (err string) {
 	d.db = p.Get("target").Get("result")
 
 	if !d.db.Truthy() {
-		return "error no se logro establecer conexión " + d.db_name + " indexdb"
+		return "open indexdb error no se logro establecer conexión " + d.db_name
 	}
 
-	d.Log("***", message, "IndexDB Connection:", d.db_name, "OK ***")
-
+	// d.Log("***", message, "IndexDB Connection:", d.db_name, " ***")
 	// DB : localdb Established, Engine: indexedDB
 	return ""
 }

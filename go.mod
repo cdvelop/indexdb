@@ -6,7 +6,7 @@ require github.com/cdvelop/model v0.0.89
 
 require github.com/cdvelop/strings v0.0.9
 
-require github.com/cdvelop/unixid v0.0.29
+require github.com/cdvelop/unixid v0.0.30
 
 replace github.com/cdvelop/model => ../model
 
