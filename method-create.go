@@ -17,7 +17,10 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		pk_field := model.PREFIX_ID_NAME + table_name
 
 		id, id_exist := data[pk_field]
-		if !id_exist {
+
+		// d.Log("DATA table_name DB", table_name, "id_exist:", id_exist)
+
+		if !id_exist || id.(string) == "" {
 
 			if !backup_required { // si no requiere backup es un objeto sin id del servidor retornamos error
 				err := "error data proveniente del servidor sin id en tabla: " + table_name
@@ -26,9 +29,12 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 			}
 
 			//agregar id al objeto si este no existe
-			id = d.GetNewID() //id nuevo
+			id, err = d.GetNewID() //id nuevo
+			if err != "" {
+				return err
+			}
 
-			// d.Log("NUEVO ID GENERADO:", id)
+			d.Log("NUEVO ID GENERADO:", id)
 
 			// date, _ := unixid.UnixNanoToStringDate(id.(string))
 			// d.Log("SU FECHA ES:", date)
@@ -37,7 +43,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		}
 
 		if backup_required { // necesita respaldo en servidor
-			data["backup"] = "false" //estado backup = no respaldado
+			data["backup"] = "create" //estado backup = no respaldado
 		}
 
 		// Inserta cada elemento en el almacén de objetos
