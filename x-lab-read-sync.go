@@ -7,7 +7,7 @@ import (
 	"github.com/cdvelop/strings"
 )
 
-func (d *indexDB) ReadSyncDataDB(FROM_TABLE string, data ...map[string]string) (result []map[string]string, err string) {
+func (d *indexDB) ReadSyncDataDB(FROM_TABLES string, data ...map[string]string) (result []map[string]string, err string) {
 	return nil, "error ReadSyncDataDB no implementado en indexDB"
 }
 
@@ -16,25 +16,25 @@ func (d *indexDB) ReadStringDataInDB(r model.ReadParams) (out []map[string]strin
 
 	d.Log("info COMIENZO LECTURA")
 
-	chanResult := make(chan model.ReadResult)
+	chanResult := make(chan model.ReadResults)
 
 	d.readDataTwo(r, chanResult)
 
 	data := <-chanResult
 
 	d.Log("info FIN LECTURA")
-	d.Log("dataString", data.DataString)
+	d.Log("dataString", data.ResultsStringing)
 	d.Log("erro", data.Error)
 
 	return
 }
 
-func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResult) {
+func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResults) {
 
-	var result = model.ReadResult{
-		DataString: []map[string]string{},
-		DataAny:    []map[string]any{},
-		Error:      "",
+	var result = model.ReadResults{
+		ResultsStringing: []map[string]string{},
+		ResultsAny:       []map[string]any{},
+		Error:            "",
 	}
 
 	cursor, err := d.readPrepareCursor(r)
@@ -93,9 +93,9 @@ func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResu
 				}
 
 				if r.RETURN_ANY {
-					result.DataAny = append(result.DataAny, data_out_any)
+					result.ResultsAny = append(result.ResultsAny, data_out_any)
 				} else {
-					result.DataString = append(result.DataString, data_out_string)
+					result.ResultsStringing = append(resuResultsStringString, data_out_string)
 				}
 
 				cursor.Call("continue")

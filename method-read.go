@@ -7,12 +7,12 @@ import (
 	"github.com/cdvelop/strings"
 )
 
-func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r model.ReadResult)) {
+func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r model.ReadResults)) {
 
-	var result = model.ReadResult{
-		DataString: []map[string]string{},
-		DataAny:    []map[string]any{},
-		Error:      "",
+	var result = model.ReadResults{
+		ResultsString: []map[string]string{},
+		ResultsAny:    []map[string]any{},
+		Error:         "",
 	}
 
 	cursor, err := d.readPrepareCursor(p)
@@ -69,9 +69,9 @@ func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r model.Read
 			}
 
 			if p.RETURN_ANY {
-				result.DataAny = append(result.DataAny, data_out_any)
+				result.ResultsAny = append(result.ResultsAny, data_out_any)
 			} else {
-				result.DataString = append(result.DataString, data_out_string)
+				result.ResultsString = append(result.ResultsString, data_out_string)
 			}
 
 			item.Call("continue")

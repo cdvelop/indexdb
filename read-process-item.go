@@ -6,7 +6,7 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func processReadItem(p *model.ReadParams, data js.Value, r *model.ReadResult) {
+func processReadItem(p *model.ReadParams, data js.Value, r *model.ReadResults) {
 
 	out_any := make(map[string]interface{})
 	out_string := map[string]string{}
@@ -38,8 +38,8 @@ func processReadItem(p *model.ReadParams, data js.Value, r *model.ReadResult) {
 	}
 
 	if p.RETURN_ANY {
-		r.DataAny = append(r.DataAny, out_any)
+		r.ResultsAny = append(r.ResultsAny, out_any)
 	} else { //STRING RETURN
-		r.DataString = append(r.DataString, out_string)
+		r.ResultsStringing = appendResultsStringString, out_string)
 	}
 }
