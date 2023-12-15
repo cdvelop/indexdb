@@ -7,7 +7,7 @@ import (
 	"github.com/cdvelop/strings"
 )
 
-func (d *indexDB) ReadSyncDataDB(FROM_TABLES string, data ...map[string]string) (result []map[string]string, err string) {
+func (d *indexDB) ReadSyncDataDB(FROM_TABLE string, data ...map[string]string) (result []map[string]string, err string) {
 	return nil, "error ReadSyncDataDB no implementado en indexDB"
 }
 

@@ -9,7 +9,7 @@ import (
 func (d *indexDB) readPrepareCursor(r model.ReadParams) (cursor js.Value, err string) {
 	const this = "readPrepareCursor error "
 
-	if err = d.checkTableStatus("read", r.FROM_TABLES); err != "" {
+	if err = d.checkTableStatus("read", r.FROM_TABLE); err != "" {
 		return js.Value{}, this + err
 	}
 
@@ -19,7 +19,7 @@ func (d *indexDB) readPrepareCursor(r model.ReadParams) (cursor js.Value, err st
 	}
 
 	// Obtener el almacén
-	store, err := d.getStore("read", r.FROM_TABLES)
+	store, err := d.getStore("read", r.FROM_TABLE)
 	if err != "" {
 		err = this + err
 		return
@@ -29,9 +29,9 @@ func (d *indexDB) readPrepareCursor(r model.ReadParams) (cursor js.Value, err st
 
 	case r.ID != "":
 
-		field_name := model.PREFIX_ID_NAME + r.FROM_TABLES
+		field_name := model.PREFIX_ID_NAME + r.FROM_TABLE
 
-		if err := fieldIndexOK(r.FROM_TABLES, field_name, store); err != "" {
+		if err := fieldIndexOK(r.FROM_TABLE, field_name, store); err != "" {
 			return js.Value{}, this + err
 		}
 
@@ -41,7 +41,7 @@ func (d *indexDB) readPrepareCursor(r model.ReadParams) (cursor js.Value, err st
 
 	case r.ORDER_BY != "":
 
-		if err := fieldIndexOK(r.FROM_TABLES, r.ORDER_BY, store); err != "" {
+		if err := fieldIndexOK(r.FROM_TABLE, r.ORDER_BY, store); err != "" {
 			return js.Value{}, this + err
 		}
 
