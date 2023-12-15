@@ -1,8 +1,8 @@
-github.com/cdvelop/model v0.0.100 h1:7Bx2vPKGiqzJn2D8aGuxLCEN0QDGGpR+39GyNPSB7u0=
-github.com/cdvelop/model v0.0.100/go.mod h1:cYJNxbv1WV/aDgiVPV9VXs8LrbF8+0nU+X+KfSevyzw=
+github.com/cdvelop/model v0.0.101 h1:UAuZOAFpfMB26XD8gPTQIkilfL1JTDNk5vT6b2w7rxg=
+github.com/cdvelop/model v0.0.101/go.mod h1:cYJNxbv1WV/aDgiVPV9VXs8LrbF8+0nU+X+KfSevyzw=
 github.com/cdvelop/strings v0.0.9 h1:yDh2msl3EQja0dHw+oOHfD9ymQMa50KakKTkjsXDnvw=
 github.com/cdvelop/strings v0.0.9/go.mod h1:zNexDeXHRETbMmlmNThQeM7ksRsvzrphsCfwuSxaURk=
 github.com/cdvelop/timeserver v0.0.31 h1:+Yt1ydpmtNDMJbFu29hcnmkwtK+BW+gBQyhbVVAvnHg=
 github.com/cdvelop/timetools v0.0.32 h1:tQPO4BwrEBrIGVMZHhsoYYeu8UXyF6hicm/Q54SET6k=
-github.com/cdvelop/unixid v0.0.37 h1:a6Piqdx5PoU9ZEaIvdSrbVayQSThv/2rzx78F+scNfA=
-github.com/cdvelop/unixid v0.0.37/go.mod h1:fpSphxTwMUQcEdv3Ea2w7mAcfCZuJT03X6Mf3P4tRj4=
+github.com/cdvelop/unixid v0.0.38 h1:MTpsftiXCWjti1qWD6dnEaUwWv7i/zbbkpS9Lpbd0wk=
+github.com/cdvelop/unixid v0.0.38/go.mod h1:na3FPR9bB8m18DL3OyaoNuUIpfMaMZwarXETgYQrPcg=
