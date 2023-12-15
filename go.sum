@@ -1,5 +1,5 @@
-github.com/cdvelop/model v0.0.93 h1:1kUfqJyVfyfBOe/XTAb7ksWtwkT9sjT+oVhGomzyUUQ=
-github.com/cdvelop/model v0.0.93/go.mod h1:cYJNxbv1WV/aDgiVPV9VXs8LrbF8+0nU+X+KfSevyzw=
+github.com/cdvelop/model v0.0.95 h1:8OEcgnOgPC2BsY/ZuM7a6wBIWOypKA4Da2DSi5sQtuA=
+github.com/cdvelop/model v0.0.95/go.mod h1:cYJNxbv1WV/aDgiVPV9VXs8LrbF8+0nU+X+KfSevyzw=
 github.com/cdvelop/strings v0.0.9 h1:yDh2msl3EQja0dHw+oOHfD9ymQMa50KakKTkjsXDnvw=
 github.com/cdvelop/strings v0.0.9/go.mod h1:zNexDeXHRETbMmlmNThQeM7ksRsvzrphsCfwuSxaURk=
 github.com/cdvelop/timeserver v0.0.31 h1:+Yt1ydpmtNDMJbFu29hcnmkwtK+BW+gBQyhbVVAvnHg=

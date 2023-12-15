@@ -7,9 +7,11 @@ import (
 // items support: []map[string]string or map[string]string
 func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, items any) (err string) {
 
+	const t = "indexdb create "
+
 	store, err := d.getStore("create", table_name)
 	if err != "" {
-		return err
+		return t + err
 	}
 
 	for _, data := range DataConvertToAny(items) {
@@ -23,7 +25,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		if !id_exist || id.(string) == "" {
 
 			if !backup_required { // si no requiere backup es un objeto sin id del servidor retornamos error
-				err := "error data proveniente del servidor sin id en tabla: " + table_name
+				err := t + "error data proveniente del servidor sin id en tabla: " + table_name
 				d.Log(err, data)
 				return err
 			}
@@ -31,7 +33,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 			//agregar id al objeto si este no existe
 			id, err = d.GetNewID() //id nuevo
 			if err != "" {
-				return err
+				return t + err
 			}
 
 			d.Log("NUEVO ID GENERADO:", id)

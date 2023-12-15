@@ -2,7 +2,7 @@ module github.com/cdvelop/indexdb
 
 go 1.20
 
-require github.com/cdvelop/model v0.0.93
+require github.com/cdvelop/model v0.0.95
 
 require github.com/cdvelop/strings v0.0.9
 
