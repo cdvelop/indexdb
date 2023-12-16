@@ -45,7 +45,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		}
 
 		if backup_required { // necesita respaldo en servidor
-			data["backup"] = "create" //estado backup = no respaldado
+			data["create"] = "backup" //estado backup = no respaldado
 		}
 
 		// Inserta cada elemento en el almacén de objetos

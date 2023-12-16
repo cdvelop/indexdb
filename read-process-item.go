@@ -40,6 +40,6 @@ func processReadItem(p *model.ReadParams, data js.Value, r *model.ReadResults) {
 	if p.RETURN_ANY {
 		r.ResultsAny = append(r.ResultsAny, out_any)
 	} else { //STRING RETURN
-		r.ResultsStringing = appendResultsStringString, out_string)
+		r.ResultsString = append(r.ResultsString, out_string)
 	}
 }

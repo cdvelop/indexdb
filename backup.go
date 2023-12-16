@@ -1,6 +1,8 @@
 package indexdb
 
-import "github.com/cdvelop/model"
+import (
+	"github.com/cdvelop/model"
+)
 
 func (d *indexDB) BackupDataBase(callback func(err string)) {
 	// reset valores a 0
@@ -29,14 +31,13 @@ func (d *indexDB) addNewObjectsCreated() {
 			index := i // Captura el valor de i en esta iteración
 			table := o.Table
 			d.ReadAsyncDataDB(model.ReadParams{
-				FROM_TABLE:      table,
-				WHERE:           []string{"backup"},
-				SEARCH_ARGUMENT: "false",
-				RETURN_ANY:      true,
-			}, func(r model.ReadResults) {
+				FROM_TABLE: table,
+				WHERE:      []map[string]string{{"create": "backup", "update": "backup", "delete": "backup"}},
+				RETURN_ANY: true,
+			}, func(r *model.ReadResults, err string) {
 
-				if r.Error != "" {
-					d.Log(r.Error)
+				if err != "" {
+					d.Log(err)
 					return
 				}
 

@@ -7,18 +7,16 @@ import (
 	"github.com/cdvelop/strings"
 )
 
-func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r model.ReadResults)) {
+func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r *model.ReadResults, err string)) {
 
-	var result = model.ReadResults{
+	var result = &model.ReadResults{
 		ResultsString: []map[string]string{},
 		ResultsAny:    []map[string]any{},
-		Error:         "",
 	}
 
 	cursor, err := d.readPrepareCursor(p)
 	if err != "" {
-		result.Error = err
-		callback(result)
+		callback(nil, err)
 		return
 	}
 
@@ -28,10 +26,12 @@ func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r model.Read
 
 			data := item.Get("value")
 
-			for _, where := range p.WHERE {
-				if strings.Contains(data.Get(where).String(), p.SEARCH_ARGUMENT) == 0 {
-					item.Call("continue")
-					return nil
+			for _, wheres := range p.WHERE {
+				for key, search := range wheres {
+					if strings.Contains(data.Get(key).String(), search) == 0 {
+						item.Call("continue")
+						return nil
+					}
 				}
 			}
 
@@ -77,9 +77,13 @@ func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r model.Read
 			item.Call("continue")
 		} else {
 			// d.Log("Fin de los datos.")
-			callback(result)
+			callback(result, "")
 		}
 		return nil
 	}))
 
+}
+
+func (d *indexDB) ReadSyncDataDB(p model.ReadParams, data ...map[string]string) (result []map[string]string, err string) {
+	return nil, "error ReadSyncDataDB no implementado en indexDB"
 }

@@ -4,7 +4,6 @@ import (
 	"syscall/js"
 
 	"github.com/cdvelop/model"
-	"github.com/cdvelop/strings"
 )
 
 func (d *indexDB) ReadStringDataInDBold(r model.ReadParams) (out []map[string]string, err string) {
@@ -68,11 +67,11 @@ func (d *indexDB) onSuccess(resolve, reject js.Func) js.Func {
 					if item.Truthy() {
 						item := item.Get("value")
 
-						for _, where := range d.readParams.WHERE {
-							if strings.Contains(item.Get(where).String(), d.readParams.SEARCH_ARGUMENT) == 0 {
-								item.Call("continue")
-							}
-						}
+						// for _, where := range d.readParams.WHERE {
+						// 	if strings.Contains(item.Get(where).String(), d.readParams.SEARCH_ARGUMENT) == 0 {
+						// 		item.Call("continue")
+						// 	}
+						// }
 
 						itemsOut = append(itemsOut, item)
 

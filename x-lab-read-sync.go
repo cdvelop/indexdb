@@ -4,12 +4,7 @@ import (
 	"syscall/js"
 
 	"github.com/cdvelop/model"
-	"github.com/cdvelop/strings"
 )
-
-func (d *indexDB) ReadSyncDataDB(FROM_TABLE string, data ...map[string]string) (result []map[string]string, err string) {
-	return nil, "error ReadSyncDataDB no implementado en indexDB"
-}
 
 func (d *indexDB) ReadStringDataInDB(r model.ReadParams) (out []map[string]string, err string) {
 	const this = "ReadStringDataInDB "
@@ -23,8 +18,8 @@ func (d *indexDB) ReadStringDataInDB(r model.ReadParams) (out []map[string]strin
 	data := <-chanResult
 
 	d.Log("info FIN LECTURA")
-	d.Log("dataString", data.ResultsStringing)
-	d.Log("erro", data.Error)
+	d.Log("dataString", data.ResultsString)
+	// d.Log("erro", data.Error)
 
 	return
 }
@@ -32,14 +27,13 @@ func (d *indexDB) ReadStringDataInDB(r model.ReadParams) (out []map[string]strin
 func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResults) {
 
 	var result = model.ReadResults{
-		ResultsStringing: []map[string]string{},
-		ResultsAny:       []map[string]any{},
-		Error:            "",
+		ResultsString: []map[string]string{},
+		ResultsAny:    []map[string]any{},
 	}
 
 	cursor, err := d.readPrepareCursor(r)
 	if err != "" {
-		result.Error = err
+		// result.Error = err
 		chanResult <- result
 		return
 	}
@@ -53,12 +47,12 @@ func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResu
 
 				data := cursor.Get("value")
 
-				for _, where := range r.WHERE {
-					if strings.Contains(data.Get(where).String(), r.SEARCH_ARGUMENT) == 0 {
-						cursor.Call("continue")
-						return nil
-					}
-				}
+				// for _, where := range r.WHERE {
+				// if strings.Contains(data.Get(where).String(), r.SEARCH_ARGUMENT) == 0 {
+				// 	cursor.Call("continue")
+				// 	return nil
+				// }
+				// }
 
 				data_out_any := make(map[string]interface{})
 				data_out_string := map[string]string{}
@@ -93,9 +87,9 @@ func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResu
 				}
 
 				if r.RETURN_ANY {
-					result.ResultsAny = append(result.ResultsAny, data_out_any)
+					// result.ResultsAny = append(result.ResultsAny, data_out_any)
 				} else {
-					result.ResultsStringing = append(resuResultsStringString, data_out_string)
+					// result.ResultsStringing = append(resuResultsStringString, data_out_string)
 				}
 
 				cursor.Call("continue")
