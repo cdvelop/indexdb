@@ -2,5 +2,3 @@ github.com/cdvelop/strings v0.0.9 h1:yDh2msl3EQja0dHw+oOHfD9ymQMa50KakKTkjsXDnvw
 github.com/cdvelop/strings v0.0.9/go.mod h1:zNexDeXHRETbMmlmNThQeM7ksRsvzrphsCfwuSxaURk=
 github.com/cdvelop/timeserver v0.0.31 h1:+Yt1ydpmtNDMJbFu29hcnmkwtK+BW+gBQyhbVVAvnHg=
 github.com/cdvelop/timetools v0.0.32 h1:tQPO4BwrEBrIGVMZHhsoYYeu8UXyF6hicm/Q54SET6k=
-github.com/cdvelop/unixid v0.0.41 h1:XtQag4oAFV69kng5zcVc0OB5PzOS7vtIibNEru+9WBI=
-github.com/cdvelop/unixid v0.0.41/go.mod h1:KVMyT1jZphNqKVb4BwB0De1ziNmm0NlVR50WMnRPmmo=

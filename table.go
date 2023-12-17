@@ -1,5 +1,28 @@
 package indexdb
 
+import "github.com/cdvelop/model"
+
+func (d *indexDB) createTable(o *model.Object) {
+
+	if !o.NoAddObjectInDB {
+		// d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
+		if len(o.Fields) != 0 {
+
+			pk_name := o.PrimaryKeyName()
+
+			newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": pk_name})
+
+			for _, f := range o.Fields {
+
+				if !f.NotRequiredInDB {
+					// Crear un índices para búsqueda campos principales
+					newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
+				}
+			}
+		}
+	}
+}
+
 func (d indexDB) checkTableStatus(operation, table_name string) (err string) {
 
 	if !d.db.Truthy() {

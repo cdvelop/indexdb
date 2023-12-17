@@ -2,16 +2,17 @@ package indexdb
 
 import (
 	"github.com/cdvelop/model"
+	"github.com/cdvelop/strings"
 )
 
 // items support: []map[string]string or map[string]string
 func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, items any) (err string) {
 
-	const t = "indexdb create "
+	const e = "indexdb create "
 
 	store, err := d.getStore("create", table_name)
 	if err != "" {
-		return t + err
+		return e + err
 	}
 
 	for _, data := range DataConvertToAny(items) {
@@ -25,7 +26,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		if !id_exist || id.(string) == "" {
 
 			if !backup_required { // si no requiere backup es un objeto sin id del servidor retornamos error
-				err := t + "error data proveniente del servidor sin id en tabla: " + table_name
+				err := e + "error data proveniente del servidor sin id en tabla: " + table_name
 				d.Log(err, data)
 				return err
 			}
@@ -33,10 +34,12 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 			//agregar id al objeto si este no existe
 			id, err = d.GetNewID() //id nuevo
 			if err != "" {
-				return t + err
+				return e + err
 			}
-
 			d.Log("NUEVO ID GENERADO:", id)
+			if strings.Contains(id.(string), ".") == 0 {
+				return e + "id generado no contiene numero de usuario"
+			}
 
 			// date, _ := unixid.UnixNanoToStringDate(id.(string))
 			// d.Log("SU FECHA ES:", date)

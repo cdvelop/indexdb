@@ -1,43 +1,43 @@
 
-let db;
+// let db;
 
-function startDataBase() {
+// function startDataBase() {
     
-    db = indexedDB.open("localdb");
+//     db = indexedDB.open("localdb");
 
 
-    db.addEventListener("error",showDbError);
-    db.addEventListener("success",openExistingDB);
-    db.addEventListener("upgradeneeded",createNewDB);
+//     db.addEventListener("error",showDbError);
+//     db.addEventListener("success",openExistingDB);
+//     db.addEventListener("upgradeneeded",createNewDB);
 
-    console.log("iniciando base de datos")
-}
-
-
-// startDataBase();
+//     console.log("iniciando base de datos")
+// }
 
 
-function showDbError(e) {
+// // startDataBase();
+
+
+// function showDbError(e) {
     
-    console.log("showDbError ",e)
-}
+//     console.log("showDbError ",e)
+// }
 
-function openExistingDB(e) {
+// function openExistingDB(e) {
     
-    console.log("openExistingDB ",e)
+//     console.log("openExistingDB ",e)
     
-}
+// }
 
-function createNewDB(e) {
+// function createNewDB(e) {
 
-    console.log("createNewDB ",e)
+//     console.log("createNewDB ",e)
 
-    let res = e.target.result;
+//     let res = e.target.result;
 
-    // crear tabla
-    let new_table = res.createObjectStore("table_staff",{keyPath:"id_staff"});
+//     // crear tabla
+//     let new_table = res.createObjectStore("table_staff",{keyPath:"id_staff"});
 
-    // crear indices para búsqueda
-    new_table.createIndex("searchBYstaff_name","staff_name",{unique:false});
+//     // crear indices para búsqueda
+//     new_table.createIndex("searchBYstaff_name","staff_name",{unique:false});
     
-}
+// }
