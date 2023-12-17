@@ -8,7 +8,7 @@ import (
 )
 
 // run = RunBootData()
-func Add(h *model.Handlers) (err string) {
+func Add(h *model.MainHandler) (err string) {
 
 	newDb := indexDB{
 		db_name:        "localdb",

@@ -26,6 +26,10 @@ type indexDB struct {
 
 	remaining int
 
+	//DATA IN TO CREATE, UPDATE
+	data_in_any []map[string]interface{}
+	data_in_str []map[string]string
+
 	//READ NEW
 	cursor     js.Value
 	readParams model.ReadParams

@@ -10,7 +10,7 @@ func (d *indexDB) BackupDataBase(callback func(err string)) {
 	d.backupRespond = callback
 	d.remaining = 0
 
-	for _, o := range d.GetObjects() {
+	for _, o := range d.GetAllObjectsFromMainHandler() {
 		if len(o.Fields) != 0 && !o.NoAddObjectInDB { // obtenemos los objetos creados en la db
 			d.remaining++
 		}
@@ -26,7 +26,7 @@ func (d *indexDB) BackupDataBase(callback func(err string)) {
 
 func (d *indexDB) addNewObjectsCreated() {
 
-	for i, o := range d.GetObjects() {
+	for i, o := range d.GetAllObjectsFromMainHandler() {
 		if len(o.Fields) != 0 {
 			index := i // Captura el valor de i en esta iteración
 			table := o.Table

@@ -10,8 +10,10 @@ func (d *indexDB) UpdateObjectsInDB(table_name string, all_data ...map[string]st
 		return err
 	}
 
+	d.prepareDataIN(all_data)
+
 	// Iterar sobre los datos a actualizar
-	for _, obj := range DataConvertToAny(all_data) {
+	for _, obj := range d.data_in_any {
 
 		// Obtener el ID del objeto
 		id, ok := obj[model.PREFIX_ID_NAME+table_name].(string)

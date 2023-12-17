@@ -15,7 +15,9 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		return e + err
 	}
 
-	for _, data := range DataConvertToAny(items) {
+	d.prepareDataIN(items)
+
+	for i, data := range d.data_in_any {
 
 		pk_field := model.PREFIX_ID_NAME + table_name
 
@@ -36,7 +38,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 			if err != "" {
 				return e + err
 			}
-			d.Log("NUEVO ID GENERADO:", id)
+			// d.Log("NUEVO ID GENERADO:", id)
 			if strings.Contains(id.(string), ".") == 0 {
 				return e + "id generado no contiene numero de usuario"
 			}
@@ -62,6 +64,17 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		if blob, exist := data["blob"]; exist {
 			data["url"] = CreateBlobURL(blob)
 		}
+
+		// si todo esta ok retornamos el id
+		if len(d.data_in_str) != 0 { // se envió la data en string
+
+			d.data_in_str[i][pk_field] = id.(string)
+
+		} else { // se envió la data de tipo any
+
+			d.data_in_any[i][pk_field] = id.(string)
+		}
+
 	}
 
 	return ""
