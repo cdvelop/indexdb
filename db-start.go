@@ -28,7 +28,7 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 		return nil
 	}
 
-	for _, o := range d.GetAllObjectsFromMainHandler() {
+	for _, o := range d.MainHandlerGetAllObjects() {
 		if !o.NoAddObjectInDB {
 			// d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
 			if len(o.Fields) != 0 {

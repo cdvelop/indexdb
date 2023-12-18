@@ -11,13 +11,13 @@ import (
 func Add(h *model.MainHandler) (err string) {
 
 	newDb := indexDB{
-		db_name:        "localdb",
-		db:             js.Value{},
-		http:           h,
-		ObjectsHandler: h,
-		result:         nil,
-		UnixID:         nil,
-		Logger:         h.Logger,
+		db_name:       "localdb",
+		db:            js.Value{},
+		http:          h,
+		ObjectHandler: h,
+		result:        nil,
+		UnixID:        nil,
+		Logger:        h.Logger,
 	}
 
 	h.DataBaseAdapter = &newDb
