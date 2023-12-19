@@ -13,7 +13,7 @@ type indexDB struct {
 
 	http model.FetchAdapter
 
-	model.ObjectHandler
+	model.ObjectsHandlerAdapter
 
 	result func(err string)
 
