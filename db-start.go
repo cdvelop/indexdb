@@ -28,22 +28,18 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 		return nil
 	}
 
-	for _, o := range d.GetAllObjects() {
-		if !o.NoAddObjectInDB {
-			// d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
-			if len(o.Fields) != 0 {
+	for _, o := range d.getObjectsDB() {
+		// d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
 
-				pk_name := o.PrimaryKeyName()
+		pk_name := o.PrimaryKeyName()
 
-				newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": pk_name})
+		newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": pk_name})
 
-				for _, f := range o.Fields {
+		for _, f := range o.Fields {
 
-					if !f.NotRequiredInDB {
-						// Crear un índices para búsqueda campos principales
-						newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
-					}
-				}
+			if !f.NotRequiredInDB {
+				// Crear un índices para búsqueda campos principales
+				newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
 			}
 		}
 	}

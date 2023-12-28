@@ -33,6 +33,8 @@ type indexDB struct {
 	//READ NEW
 	cursor     js.Value
 	readParams model.ReadParams
+
+	objects_db []*model.Object
 }
 
 type backup struct {

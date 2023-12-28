@@ -8,13 +8,7 @@ func (d *indexDB) BackupDataBase(callback func(err string)) {
 	// reset valores a 0
 	d.backups = []backup{}
 	d.backupRespond = callback
-	d.remaining = 0
-
-	for _, o := range d.GetAllObjects() {
-		if len(o.Fields) != 0 && !o.NoAddObjectInDB { // obtenemos los objetos creados en la db
-			d.remaining++
-		}
-	}
+	d.remaining = len(d.getObjectsDB())
 
 	d.Log("RESPALDANDO BASE DE DATOS INDEX DB")
 
@@ -26,41 +20,40 @@ func (d *indexDB) BackupDataBase(callback func(err string)) {
 
 func (d *indexDB) addNewObjectsCreated() {
 
-	for i, o := range d.GetAllObjects() {
-		if len(o.Fields) != 0 {
-			index := i // Captura el valor de i en esta iteración
-			table := o.Table
-			d.ReadAsyncDataDB(model.ReadParams{
-				FROM_TABLE: table,
-				WHERE:      []map[string]string{{"create": "backup", "update": "backup", "delete": "backup"}},
-				RETURN_ANY: true,
-			}, func(r *model.ReadResults, err string) {
+	for i, o := range d.getObjectsDB() {
+		index := i // Captura el valor de i en esta iteración
+		table := o.Table
+		d.ReadAsyncDataDB(model.ReadParams{
+			FROM_TABLE: table,
+			WHERE:      []map[string]string{{"create": "backup", "update": "backup", "delete": "backup"}},
+			RETURN_ANY: true,
+		}, func(r *model.ReadResults, err string) {
 
-				if err != "" {
-					d.Log(err)
-					return
+			if err != "" {
+				d.Log(err)
+				return
+			}
+
+			if len(r.ResultsAny) != 0 {
+				d.Log(r.ResultsAny)
+
+				new := backup{
+					object:   o,
+					data:     r.ResultsAny,
+					finished: false,
+					err:      "",
 				}
 
-				if len(r.ResultsAny) != 0 {
-					d.Log(r.ResultsAny)
+				d.backups = append(d.backups, new)
 
-					new := backup{
-						object:   o,
-						data:     r.ResultsAny,
-						finished: false,
-						err:      "",
-					}
+				d.Log("BACKUP REQUERIDO", table)
+			}
+			d.remaining--
 
-					d.backups = append(d.backups, new)
+			// finish
+			d.finishReadData(index, table)
+		})
 
-					d.Log("BACKUP REQUERIDO", table)
-				}
-				d.remaining--
-
-				// finish
-				d.finishReadData(index, table)
-			})
-		}
 	}
 
 }

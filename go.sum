@@ -1,4 +1,4 @@
 github.com/cdvelop/strings v0.0.9 h1:yDh2msl3EQja0dHw+oOHfD9ymQMa50KakKTkjsXDnvw=
 github.com/cdvelop/strings v0.0.9/go.mod h1:zNexDeXHRETbMmlmNThQeM7ksRsvzrphsCfwuSxaURk=
-github.com/cdvelop/timeserver v0.0.31 h1:+Yt1ydpmtNDMJbFu29hcnmkwtK+BW+gBQyhbVVAvnHg=
-github.com/cdvelop/timetools v0.0.32 h1:tQPO4BwrEBrIGVMZHhsoYYeu8UXyF6hicm/Q54SET6k=
+github.com/cdvelop/timeserver v0.0.32 h1:11K2TVGBPGfytpCeV4LP/KalLV+E0l6EBI9tijRXtYM=
+github.com/cdvelop/timetools v0.0.34 h1:i0xGl3TWul20Mjfo9Al6syclVmhQcitQRsKWdETQkx4=

@@ -13,3 +13,18 @@ func (d *indexDB) GetObjectByTableName(table_name string) (o *model.Object, err 
 
 	return nil, "error objeto: " + table_name + ",no encontrado"
 }
+
+func (d *indexDB) getObjectsDB() []*model.Object {
+
+	if len(d.objects_db) == 0 {
+		for _, o := range d.GetAllObjects() {
+			if !o.NoAddObjectInDB {
+				if len(o.Fields) != 0 {
+					d.objects_db = append(d.objects_db, o)
+				}
+			}
+		}
+	}
+
+	return d.objects_db
+}
