@@ -35,6 +35,8 @@ type indexDB struct {
 	readParams model.ReadParams
 
 	objects_db []*model.Object
+
+	er js.Value
 }
 
 type backup struct {
