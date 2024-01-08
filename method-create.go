@@ -7,23 +7,28 @@ import (
 	"github.com/cdvelop/strings"
 )
 
+var blob_exist bool
+var blob_file interface{}
+
 // items support: []map[string]string or map[string]string
 func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, items any) (err string) {
 
+	blob_exist = false
+	blob_file = nil
+
 	const e = "indexdb create "
 
-	store, err := d.getStore("create", table_name)
-	if err != "" {
-		return e + err
+	d.err = d.prepareStore("create", table_name)
+	if d.err != "" {
+		return e + d.err
 	}
 
-	d.prepareDataIN(items)
+	d.prepareDataIN(items, true)
 
-	// fmt.Println("DATA IN INDEX DB:", d.data_in_any)
+	pk_field := model.PREFIX_ID_NAME + table_name
 
+	// CHECK ID
 	for i, data := range d.data_in_any {
-
-		pk_field := model.PREFIX_ID_NAME + table_name
 
 		id, id_exist := data[pk_field]
 
@@ -47,23 +52,32 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 				return e + "id generado no contiene numero de usuario"
 			}
 
-			// date, _ := unixid.UnixNanoToStringDate(id.(string))
-			// d.Log("SU FECHA ES:", date)
-
 			data[pk_field] = id
 		}
 
-		if backup_required { // necesita respaldo en servidor
-			data["create"] = "backup" //estado backup = no respaldado
-		}
+		// si todo esta ok retornamos el id
+		if len(d.data_in_str) != 0 { // se envió la data en string
 
-		// d.Log("insertando en indexdb:", data)
+			d.data_in_str[i][pk_field] = id.(string)
+
+		} else { // se envió la data de tipo any
+
+			d.data_in_any[i][pk_field] = id.(string)
+		}
+	}
+
+	if backup_required {
+		d.BackupOneObjectType("create", table_name, items)
+	}
+
+	// fmt.Println("DATA IN INDEX DB:", d.data_in_any)
+
+	for _, data := range d.data_in_any {
 
 		// Inserta cada elemento en el almacén de objetos
-		result := store.Call("add", data)
+		result := d.store.Call("add", data)
 		if result.IsNull() {
-
-			return "error al crear elemento en la db tabla: " + table_name + " id: " + id.(string)
+			return "error al crear elemento en la db tabla: " + table_name + " id: " + data[pk_field].(string)
 		}
 		// d.Log("resultado:", result)
 
@@ -77,23 +91,13 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 			// Log más detalles sobre el error
 			errorObject := p[0].Get("target").Get("error")
 			errorMessage := errorObject.Get("message").String()
-			d.Log("Error al crear elemento en la db tabla:", table_name, "id:", id.(string), errorMessage)
+			d.Log("Error al crear elemento en la db tabla:", table_name, "id:", data[pk_field].(string), errorMessage)
 			return nil
 		}))
 
-		// retornamos url temporal para acceder al archivo
-		if blob, exist := data["blob"]; exist {
-			data["url"] = CreateBlobURL(blob)
-		}
-
-		// si todo esta ok retornamos el id
-		if len(d.data_in_str) != 0 { // se envió la data en string
-
-			d.data_in_str[i][pk_field] = id.(string)
-
-		} else { // se envió la data de tipo any
-
-			d.data_in_any[i][pk_field] = id.(string)
+		// creamos url temporal para acceder al archivo en el dom
+		if blob_file, blob_exist = data["blob"]; blob_exist {
+			data["url"] = CreateBlobURL(blob_file)
 		}
 
 	}

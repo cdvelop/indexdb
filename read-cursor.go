@@ -6,11 +6,11 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) readPrepareCursor(r model.ReadParams) (cursor js.Value, err string) {
-	const this = "readPrepareCursor error "
+func (d *indexDB) readPrepareCursor(r model.ReadParams) (err string) {
+	const e = "readPrepareCursor error "
 
-	if err = d.checkTableStatus("read", r.FROM_TABLE); err != "" {
-		return js.Value{}, this + err
+	if d.err = d.checkTableStatus("read", r.FROM_TABLE); d.err != "" {
+		return e + d.err
 	}
 
 	sort_order := "next"
@@ -19,10 +19,9 @@ func (d *indexDB) readPrepareCursor(r model.ReadParams) (cursor js.Value, err st
 	}
 
 	// Obtener el almacén
-	store, err := d.getStore("read", r.FROM_TABLE)
-	if err != "" {
-		err = this + err
-		return
+	d.err = d.prepareStore("read", r.FROM_TABLE)
+	if d.err != "" {
+		return e + d.err
 	}
 
 	switch {
@@ -31,26 +30,26 @@ func (d *indexDB) readPrepareCursor(r model.ReadParams) (cursor js.Value, err st
 
 		field_name := model.PREFIX_ID_NAME + r.FROM_TABLE
 
-		if err := fieldIndexOK(r.FROM_TABLE, field_name, store); err != "" {
-			return js.Value{}, this + err
+		if d.err = d.fieldIndexOK(r.FROM_TABLE, field_name); d.err != "" {
+			return e + d.err
 		}
 
 		rangeObj := js.Global().Get("IDBKeyRange").Call("only", r.ID)
-		index := store.Call("index", field_name)
-		cursor = index.Call("openCursor", rangeObj)
+		index := d.store.Call("index", field_name)
+		d.cursor = index.Call("openCursor", rangeObj)
 
 	case r.ORDER_BY != "":
 
-		if err := fieldIndexOK(r.FROM_TABLE, r.ORDER_BY, store); err != "" {
-			return js.Value{}, this + err
+		if d.err = d.fieldIndexOK(r.FROM_TABLE, r.ORDER_BY); d.err != "" {
+			return e + d.err
 		}
 
-		index := store.Call("index", r.ORDER_BY)
+		index := d.store.Call("index", r.ORDER_BY)
 		// El valor nil como clave inicial significa que el cursor comenzará desde el primer registro en orden descendente y luego avanzará hacia registros posteriores en ese orden
-		cursor = index.Call("openCursor", nil, sort_order)
+		d.cursor = index.Call("openCursor", nil, sort_order)
 	default:
 		// normal
-		cursor = store.Call("openCursor")
+		d.cursor = d.store.Call("openCursor")
 	}
 
 	return

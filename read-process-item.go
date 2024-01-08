@@ -6,7 +6,7 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func processReadItem(p *model.ReadParams, data js.Value, r *model.ReadResults) {
+func (d indexDB) processReadItem(p *model.ReadParams, data js.Value, r *model.ReadResults) {
 
 	out_any := make(map[string]interface{})
 	out_string := map[string]string{}

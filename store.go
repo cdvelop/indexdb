@@ -1,14 +1,10 @@
 package indexdb
 
-import (
-	"syscall/js"
-)
-
 // action create,read, delete, update
-func (d *indexDB) getStore(action, table_name string) (st *js.Value, err string) {
+func (d *indexDB) prepareStore(action, table_name string) (err string) {
 
-	if err := d.checkTableStatus(action, table_name); err != "" {
-		return nil, err
+	if d.err = d.checkTableStatus(action, table_name); d.err != "" {
+		return d.err
 	}
 
 	var readwrite = "readonly"
@@ -17,14 +13,14 @@ func (d *indexDB) getStore(action, table_name string) (st *js.Value, err string)
 	}
 
 	// Obtiene una transacción de escritura
-	transaction := d.db.Call("transaction", table_name, readwrite)
+	d.transaction = d.db.Call("transaction", table_name, readwrite)
 
 	// Obtiene el almacén de objetos
-	store := transaction.Call("objectStore", table_name)
+	d.store = d.transaction.Call("objectStore", table_name)
 
-	if !store.Truthy() {
-		return nil, "error no se logro abrir el almacén: " + table_name + " db para la acción " + action
+	if !d.store.Truthy() {
+		return "error no se logro abrir el almacén: " + table_name + " db para la acción " + action
 	}
 
-	return &store, ""
+	return ""
 }

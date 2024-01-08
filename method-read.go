@@ -14,13 +14,13 @@ func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r *model.Rea
 		ResultsAny:    []map[string]any{},
 	}
 
-	cursor, err := d.readPrepareCursor(p)
-	if err != "" {
-		callback(nil, err)
+	d.err = d.readPrepareCursor(p)
+	if d.err != "" {
+		callback(nil, d.err)
 		return
 	}
 
-	cursor.Call("addEventListener", "success", js.FuncOf(func(this js.Value, v []js.Value) interface{} {
+	d.cursor.Call("addEventListener", "success", js.FuncOf(func(this js.Value, v []js.Value) interface{} {
 		item := v[0].Get("target").Get("result")
 		if item.Truthy() {
 

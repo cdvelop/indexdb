@@ -6,9 +6,9 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) CreateTablesInDB(objects []*model.Object, result func(err string)) {
+func (d *indexDB) CreateTablesInDB(objects []*model.Object, response func(err string)) {
 
-	d.result = result
+	d.response = response
 
 	// Accede a la base de datos
 	db := js.Global().Get("indexedDB").Call("open", d.db_name)
@@ -24,11 +24,11 @@ func (d *indexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 
 	err := d.open(&p[0], "NEW CREATE")
 	if err != "" {
-		d.result(err)
+		d.response(err)
 		return nil
 	}
 
-	for _, o := range d.getObjectsDB() {
+	for _, o := range d.GetAllObjects(true) {
 		// d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
 
 		pk_name := o.PrimaryKeyName()
@@ -55,11 +55,11 @@ func (d indexDB) showDbError(this js.Value, p []js.Value) interface{} {
 func (d *indexDB) openExistingDB(this js.Value, p []js.Value) interface{} {
 	err := d.open(&p[0], "OPEN")
 	if err != "" {
-		d.result(err)
+		d.response(err)
 		return nil
 	}
 
-	d.result("")
+	d.response("")
 
 	return nil
 }

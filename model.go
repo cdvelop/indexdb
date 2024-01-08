@@ -12,36 +12,23 @@ type indexDB struct {
 	db      js.Value
 
 	http model.FetchAdapter
-
 	model.ObjectsHandlerAdapter
-
-	result func(err string)
-
-	*unixid.UnixID
-
+	model.BackupHandlerAdapter
 	model.Logger
 
-	backups       []backup
-	backupRespond func(err string)
+	response func(err string)
 
-	remaining int
+	*unixid.UnixID
 
 	//DATA IN TO CREATE, UPDATE
 	data_in_any []map[string]interface{}
 	data_in_str []map[string]string
 
-	//READ NEW
-	cursor     js.Value
+	transaction js.Value
+	store       js.Value
+	cursor      js.Value
+	result      js.Value
+	err         string
+
 	readParams model.ReadParams
-
-	objects_db []*model.Object
-
-	er js.Value
-}
-
-type backup struct {
-	object   *model.Object
-	data     []map[string]interface{}
-	finished bool
-	err      string
 }

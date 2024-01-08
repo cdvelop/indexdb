@@ -7,25 +7,25 @@ import (
 )
 
 func (d *indexDB) ReadStringDataInDBold(r model.ReadParams) (out []map[string]string, err string) {
-	const this = "ReadStringDataInDB error "
+	const e = "ReadStringDataInDB error "
 
 	d.Log("info COMIENZO LECTURA")
 
 	d.readParams = r
 
 	// Abre un cursor para iterar sobre los objetos en el almacén
-	d.cursor, err = d.readPrepareCursor(r)
-	if err != "" {
-		return nil, this + err
+	d.err = d.readPrepareCursor(r)
+	if d.err != "" {
+		return nil, e + d.err
 	}
 
 	// Define las funciones resolve y reject
-	resolve := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	resolve := js.FuncOf(func(e js.Value, args []js.Value) interface{} {
 		// manejar resolve
 		d.Log("resolve nada:", args[0])
 		return nil
 	})
-	reject := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	reject := js.FuncOf(func(e js.Value, args []js.Value) interface{} {
 		// manejar reject
 		d.Log("reject:", args[0])
 		return nil
@@ -35,7 +35,7 @@ func (d *indexDB) ReadStringDataInDBold(r model.ReadParams) (out []map[string]st
 	promise := d.onSuccess(resolve, reject).Invoke()
 
 	// Usa la promesa
-	promise.Call("then", js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	promise.Call("then", js.FuncOf(func(e js.Value, args []js.Value) interface{} {
 		// manejar resultado
 
 		d.Log("info then datos", args[0])
@@ -50,10 +50,10 @@ func (d *indexDB) ReadStringDataInDBold(r model.ReadParams) (out []map[string]st
 }
 
 func (d *indexDB) onSuccess(resolve, reject js.Func) js.Func {
-	return js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+	return js.FuncOf(func(e js.Value, args []js.Value) interface{} {
 
 		// Manejador de esta Promesa.
-		promiseFunc := js.FuncOf(func(promiseThis js.Value, promiseArgs []js.Value) interface{} {
+		promiseFunc := js.FuncOf(func(promisee js.Value, promiseArgs []js.Value) interface{} {
 			resolve := promiseArgs[0]
 			reject := promiseArgs[1]
 
@@ -61,7 +61,7 @@ func (d *indexDB) onSuccess(resolve, reject js.Func) js.Func {
 			go func() {
 				var itemsOut []interface{}
 				// Maneja los resultados del cursor
-				d.cursor.Set("onsuccess", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+				d.cursor.Set("onsuccess", js.FuncOf(func(e js.Value, p []js.Value) interface{} {
 					item := p[0].Get("target").Get("result")
 
 					if item.Truthy() {
@@ -88,7 +88,7 @@ func (d *indexDB) onSuccess(resolve, reject js.Func) js.Func {
 				}))
 
 				// Maneja errores
-				d.cursor.Set("onerror", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+				d.cursor.Set("onerror", js.FuncOf(func(e js.Value, p []js.Value) interface{} {
 					// Aquí podrías rechazar la promesa con el error
 					reject.Invoke("Error en el cursor")
 					return nil

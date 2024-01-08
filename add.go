@@ -15,9 +15,10 @@ func Add(h *model.MainHandler) (err string) {
 		db:                    js.Value{},
 		http:                  h,
 		ObjectsHandlerAdapter: h,
-		result:                nil,
+		BackupHandlerAdapter:  h,
+		response:              nil,
 		UnixID:                nil,
-		Logger:                h.Logger,
+		Logger:                h,
 	}
 
 	h.DataBaseAdapter = &newDb

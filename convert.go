@@ -1,6 +1,6 @@
 package indexdb
 
-func (d *indexDB) prepareDataIN(item interface{}) {
+func (d *indexDB) prepareDataIN(item interface{}, convert_data_to_any bool) {
 
 	d.data_in_any = make([]map[string]interface{}, 0)
 	d.data_in_str = make([]map[string]string, 0)
@@ -19,11 +19,12 @@ func (d *indexDB) prepareDataIN(item interface{}) {
 		d.data_in_any = append(d.data_in_any, item)
 	}
 
-	d.convertStringDataIN()
-
+	if convert_data_to_any {
+		d.convertStringDataToAny()
+	}
 }
 
-func (d *indexDB) convertStringDataIN() {
+func (d *indexDB) convertStringDataToAny() {
 
 	for _, data := range d.data_in_str {
 		newData := make(map[string]interface{})
@@ -33,34 +34,4 @@ func (d *indexDB) convertStringDataIN() {
 		d.data_in_any = append(d.data_in_any, newData)
 	}
 
-}
-
-func (d *indexDB) DataConvertToAnyOLD(item interface{}) (all_data []map[string]interface{}) {
-
-	convert := func(data map[string]string) map[string]interface{} {
-		newData := make(map[string]interface{})
-		for k, v := range data {
-			newData[k] = v
-		}
-		return newData
-	}
-
-	switch item := item.(type) {
-	case map[string]string:
-		all_data = append(all_data, convert(item))
-
-	case []map[string]string:
-		for _, data := range item {
-			all_data = append(all_data, convert(data))
-		}
-
-	case []map[string]interface{}:
-		return item
-
-	case map[string]interface{}:
-		all_data = append(all_data, item)
-
-	}
-
-	return
 }

@@ -31,8 +31,8 @@ func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResu
 		ResultsAny:    []map[string]any{},
 	}
 
-	cursor, err := d.readPrepareCursor(r)
-	if err != "" {
+	d.err = d.readPrepareCursor(r)
+	if d.err != "" {
 		// result.Error = err
 		chanResult <- result
 		return
@@ -41,7 +41,7 @@ func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResu
 	then := make(chan bool)
 
 	go func() {
-		cursor.Call("addEventListener", "success", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+		d.cursor.Call("addEventListener", "success", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
 			cursor := p[0].Get("target").Get("result")
 			if cursor.Truthy() {
 

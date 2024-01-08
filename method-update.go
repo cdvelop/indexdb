@@ -2,29 +2,34 @@ package indexdb
 
 import "github.com/cdvelop/model"
 
-func (d *indexDB) UpdateObjectsInDB(table_name string, all_data ...map[string]string) (err string) {
+func (d *indexDB) UpdateObjectsInDB(table_name string, backup_required bool, all_data ...map[string]string) (err string) {
 
+	const e = "UpdateObjectsInDB "
+
+	if backup_required {
+		d.BackupOneObjectType("update", table_name, all_data)
+	}
 	// Obtener el almacén
-	store, err := d.getStore("update", table_name)
-	if err != "" {
-		return err
+	d.err = d.prepareStore("update", table_name)
+	if d.err != "" {
+		return e + d.err
 	}
 
-	d.prepareDataIN(all_data)
+	d.prepareDataIN(all_data, true)
 
 	// Iterar sobre los datos a actualizar
 	for _, obj := range d.data_in_any {
 
 		// Obtener el ID del objeto
 		id, ok := obj[model.PREFIX_ID_NAME+table_name].(string)
-		if !ok {
-			return "objeto invalido sin ID para actualizar "
+		if !ok || id == "" {
+			return e + "objeto invalido sin ID para actualizar "
 		}
 
 		// Guardar los cambios
-		result := store.Call("put", obj)
-		if result.IsNull() {
-			return "error actualizando objeto " + id + " en la db"
+		d.result = d.store.Call("put", obj)
+		if d.result.IsNull() {
+			return e + "al actualizar objeto " + id + " en la db"
 		}
 
 	}

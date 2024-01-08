@@ -1,13 +1,9 @@
 package indexdb
 
-import (
-	"syscall/js"
-)
-
-func fieldIndexOK(table, field_name string, store *js.Value) (err string) {
+func (d *indexDB) fieldIndexOK(table, field_name string) (err string) {
 
 	// Verificar si el índice existe en la tabla.
-	indexNames := store.Get("indexNames")
+	indexNames := d.store.Get("indexNames")
 
 	indexSet := make(map[string]bool)
 	for i := 0; i < indexNames.Length(); i++ {

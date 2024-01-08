@@ -2,27 +2,33 @@ package indexdb
 
 import "github.com/cdvelop/model"
 
-func (d indexDB) DeleteObjectsInDB(table_name string, all_data ...map[string]string) (err string) {
+func (d *indexDB) DeleteObjectsInDB(table_name string, backup_required bool, all_data ...map[string]string) (err string) {
 
-	store, err := d.getStore("delete", table_name)
-	if err != "" {
-		return err
+	const e = "DeleteObjectsInDB "
+
+	if backup_required {
+		d.BackupOneObjectType("delete", table_name, all_data)
+	}
+
+	d.err = d.prepareStore("delete", table_name)
+	if d.err != "" {
+		return e + d.err
 	}
 
 	for _, data := range all_data {
 		if id, exist := data[model.PREFIX_ID_NAME+table_name]; exist {
 			// elimina cada elemento en el almacén de objetos
-			result := store.Call("delete", id)
+			d.result = d.store.Call("delete", id)
 
-			if result.IsNull() {
-				return "error al eliminar en la tabla: " + table_name
+			if d.result.IsNull() {
+				return e + "al eliminar en la tabla: " + table_name
 			}
 
 		} else {
-			return "error en datos enviados a eliminar, id no encontrado tabla: " + table_name
+			return e + "id no encontrado tabla: " + table_name
 		}
 
 	}
 
-	return ""
+	return
 }
