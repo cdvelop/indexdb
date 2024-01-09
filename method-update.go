@@ -2,11 +2,11 @@ package indexdb
 
 import "github.com/cdvelop/model"
 
-func (d *indexDB) UpdateObjectsInDB(table_name string, backup_required bool, all_data ...map[string]string) (err string) {
+func (d *indexDB) UpdateObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err string) {
 
 	const e = "UpdateObjectsInDB "
 
-	if backup_required {
+	if on_server_too {
 		d.BackupOneObjectType("update", table_name, all_data)
 	}
 	// Obtener el almacén

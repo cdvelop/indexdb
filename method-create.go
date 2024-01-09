@@ -11,7 +11,7 @@ var blob_exist bool
 var blob_file interface{}
 
 // items support: []map[string]string or map[string]string
-func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, items any) (err string) {
+func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items any) (err string) {
 
 	blob_exist = false
 	blob_file = nil
@@ -36,7 +36,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 
 		if !id_exist || id.(string) == "" {
 
-			if !backup_required { // si no requiere backup es un objeto sin id del servidor retornamos error
+			if !on_server_too { // si no requiere backup es un objeto sin id del servidor retornamos error
 				err := e + "error data proveniente del servidor sin id en tabla: " + table_name
 				d.Log(err, data)
 				return err
@@ -66,7 +66,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, backup_required bool, ite
 		}
 	}
 
-	if backup_required {
+	if on_server_too {
 		d.BackupOneObjectType("create", table_name, items)
 	}
 
