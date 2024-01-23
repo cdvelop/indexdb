@@ -7,7 +7,7 @@ import (
 	"github.com/cdvelop/strings"
 )
 
-func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r *model.ReadResults, err string)) {
+func (d *indexDB) ReadAsyncDataDB(p *model.ReadParams, callback func(r *model.ReadResults, err string)) {
 
 	var result = &model.ReadResults{
 		ResultsString: []map[string]string{},
@@ -84,6 +84,6 @@ func (d *indexDB) ReadAsyncDataDB(p model.ReadParams, callback func(r *model.Rea
 
 }
 
-func (d *indexDB) ReadSyncDataDB(p model.ReadParams, data ...map[string]string) (result []map[string]string, err string) {
+func (d *indexDB) ReadSyncDataDB(p *model.ReadParams, data ...map[string]string) (result []map[string]string, err string) {
 	return nil, "error ReadSyncDataDB no implementado en indexDB"
 }

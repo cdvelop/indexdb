@@ -6,7 +6,7 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) readPrepareCursor(r model.ReadParams) (err string) {
+func (d *indexDB) readPrepareCursor(r *model.ReadParams) (err string) {
 	const e = "readPrepareCursor error "
 
 	if d.err = d.checkTableStatus("read", r.FROM_TABLE); d.err != "" {

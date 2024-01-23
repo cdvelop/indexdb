@@ -30,5 +30,5 @@ type indexDB struct {
 	result      js.Value
 	err         string
 
-	readParams model.ReadParams
+	// readParams model.ReadParams
 }

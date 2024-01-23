@@ -6,7 +6,7 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) ReadStringDataInDB(r model.ReadParams) (out []map[string]string, err string) {
+func (d *indexDB) ReadStringDataInDB(r *model.ReadParams) (out []map[string]string, err string) {
 	const this = "ReadStringDataInDB "
 
 	d.Log("info COMIENZO LECTURA")
@@ -24,7 +24,7 @@ func (d *indexDB) ReadStringDataInDB(r model.ReadParams) (out []map[string]strin
 	return
 }
 
-func (d *indexDB) readDataTwo(r model.ReadParams, chanResult chan model.ReadResults) {
+func (d *indexDB) readDataTwo(r *model.ReadParams, chanResult chan model.ReadResults) {
 
 	var result = model.ReadResults{
 		ResultsString: []map[string]string{},

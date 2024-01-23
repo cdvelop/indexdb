@@ -6,12 +6,12 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) ReadStringDataInDBold(r model.ReadParams) (out []map[string]string, err string) {
+func (d *indexDB) ReadStringDataInDBold(r *model.ReadParams) (out []map[string]string, err string) {
 	const e = "ReadStringDataInDB error "
 
 	d.Log("info COMIENZO LECTURA")
 
-	d.readParams = r
+	// d.readParams = r
 
 	// Abre un cursor para iterar sobre los objetos en el almacén
 	d.err = d.readPrepareCursor(r)
