@@ -1,9 +1,13 @@
 package indexdb
 
-// action create,read, delete, update
-func (d *indexDB) prepareStore(action, table_name string) (err string) {
+import (
+	. "github.com/cdvelop/tinystring"
+)
 
-	if d.err = d.checkTableStatus(action, table_name); d.err != "" {
+// action create,read, delete, update
+func (d *indexDB) prepareStore(action, table_name string) (err error) {
+
+	if d.err = d.checkTableStatus(action, table_name); d.err != nil {
 		return d.err
 	}
 
@@ -19,8 +23,8 @@ func (d *indexDB) prepareStore(action, table_name string) (err string) {
 	d.store = d.transaction.Call("objectStore", table_name)
 
 	if !d.store.Truthy() {
-		return "error no se logro abrir el almacén: " + table_name + " db para la acción " + action
+		return Err("error could not open store:", table_name, "for action", action)
 	}
 
-	return ""
+	return nil
 }

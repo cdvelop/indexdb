@@ -1,16 +1,19 @@
 package indexdb
 
-func (d *indexDB) DeleteObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err string) {
+import (
+	. "github.com/cdvelop/tinystring"
+)
 
-	const e = "DeleteObjectsInDB "
+func (d *indexDB) DeleteObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err error) {
+
+	const e = "DeleteObjectsInDB"
 
 	if on_server_too {
 		d.BackupOneObjectType("delete", table_name, all_data)
 	}
 
-	d.err = d.prepareStore("delete", table_name)
-	if d.err != "" {
-		return e + d.err
+	if d.err = d.prepareStore("delete", table_name); d.err != nil {
+		return Errf("%s %v", e, d.err)
 	}
 
 	for _, data := range all_data {
@@ -19,14 +22,14 @@ func (d *indexDB) DeleteObjectsInDB(table_name string, on_server_too bool, all_d
 			d.result = d.store.Call("delete", id)
 
 			if d.result.IsNull() {
-				return e + "al eliminar en la tabla: " + table_name
+				return Errf("%s error when deleting in table: %s", e, table_name)
 			}
 
 		} else {
-			return e + "id no encontrado tabla: " + table_name
+			return Errf("%s id not found in table: %s", e, table_name)
 		}
 
 	}
 
-	return
+	return nil
 }

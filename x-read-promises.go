@@ -2,19 +2,20 @@ package indexdb
 
 import (
 	"syscall/js"
+
+	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string, err string) {
-	const e = "ReadStringDataInDB error "
+func (d *indexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string, err error) {
+	const e = "ReadStringDataInDB error"
 
 	d.Log("info COMIENZO LECTURA")
 
 	// d.readParams = r
 
 	// Abre un cursor para iterar sobre los objetos en el almacén
-	d.err = d.readPrepareCursor(r)
-	if d.err != "" {
-		return nil, e + d.err
+	if d.err = d.readPrepareCursor(r); d.err != nil {
+		return nil, Errf("%s %v", e, d.err)
 	}
 
 	// Define las funciones resolve y reject
@@ -44,7 +45,7 @@ func (d *indexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string,
 
 	d.Log("info FIN LECTURA")
 
-	return
+	return nil, nil
 }
 
 func (d *indexDB) onSuccess(resolve, reject js.Func) js.Func {
@@ -88,7 +89,7 @@ func (d *indexDB) onSuccess(resolve, reject js.Func) js.Func {
 				// Maneja errores
 				d.cursor.Set("onerror", js.FuncOf(func(e js.Value, p []js.Value) interface{} {
 					// Aquí podrías rechazar la promesa con el error
-					reject.Invoke("Error en el cursor")
+					reject.Invoke("Error in cursor")
 					return nil
 				}))
 

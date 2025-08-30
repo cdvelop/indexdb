@@ -3,10 +3,10 @@ package indexdb
 import (
 	"syscall/js"
 
-	"github.com/cdvelop/tinystring"
+	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, err string)) {
+func (d *indexDB) ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, err error)) {
 
 	var result = &ReadResults{
 		ResultsString: []map[string]string{},
@@ -14,7 +14,7 @@ func (d *indexDB) ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, e
 	}
 
 	d.err = d.readPrepareCursor(p)
-	if d.err != "" {
+	if d.err != nil {
 		callback(nil, d.err)
 		return
 	}
@@ -27,7 +27,7 @@ func (d *indexDB) ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, e
 
 			for _, wheres := range p.WHERE {
 				for key, search := range wheres {
-					if !tinystring.Contains(data.Get(key).String(), search) {
+					if !Contains(data.Get(key).String(), search) {
 						item.Call("continue")
 						return nil
 					}
@@ -76,13 +76,13 @@ func (d *indexDB) ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, e
 			item.Call("continue")
 		} else {
 			// d.Log("Fin de los datos.")
-			callback(result, "")
+			callback(result, nil)
 		}
 		return nil
 	}))
 
 }
 
-func (d *indexDB) ReadSyncDataDB(p *ReadParams, data ...map[string]string) (result []map[string]string, err string) {
-	return nil, "error ReadSyncDataDB no implementado en indexDB"
+func (d *indexDB) ReadSyncDataDB(p *ReadParams, data ...map[string]string) (result []map[string]string, err error) {
+	return nil, Err("error ReadSyncDataDB not implemented in indexDB")
 }

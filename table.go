@@ -1,5 +1,9 @@
 package indexdb
 
+import (
+	. "github.com/cdvelop/tinystring"
+)
+
 func (d *indexDB) createTable(o *Object) {
 
 	if !o.NoAddObjectInDB {
@@ -21,17 +25,17 @@ func (d *indexDB) createTable(o *Object) {
 	}
 }
 
-func (d indexDB) checkTableStatus(operation, table_name string) (err string) {
+func (d indexDB) checkTableStatus(operation, table_name string) (err error) {
 
 	if !d.db.Truthy() {
-		return "error " + operation + " variable db no definida en index db " + table_name
+		return Err(operation, "variable db not defined in index db", table_name)
 	}
 
 	if !d.TableExist(table_name) {
-		return "error acción: " + operation + ". tabla " + table_name + " no existe en indexdb"
+		return Err("error action:", operation, ". table", table_name, "does not exist in indexdb")
 	}
 
-	return ""
+	return nil
 }
 
 func (d indexDB) TableExist(table_name string) bool {

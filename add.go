@@ -3,11 +3,12 @@ package indexdb
 import (
 	"syscall/js"
 
+	. "github.com/cdvelop/tinystring"
 	"github.com/cdvelop/unixid"
 )
 
 // run = RunBootData()
-func Add(h *MainHandler) (err string) {
+func Add(h *MainHandler) (err error) {
 
 	newDb := indexDB{
 		db_name:               "localdb",
@@ -23,13 +24,13 @@ func Add(h *MainHandler) (err string) {
 	h.DataBaseAdapter = &newDb
 
 	uid, err := unixid.NewUnixID(h)
-	if err != "" {
-		return err
+	if err != nil {
+		return Err("error creating new unixid", err)
 	}
 
 	newDb.UnixID = uid
 
-	return ""
+	return nil
 }
 
 func (indexDB) RunOnClientDB() bool { //true base de datos corre en el browser

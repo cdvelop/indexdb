@@ -1,6 +1,10 @@
 package indexdb
 
-func (d *indexDB) fieldIndexOK(table, field_name string) (err string) {
+import (
+	. "github.com/cdvelop/tinystring"
+)
+
+func (d *indexDB) fieldIndexOK(table, field_name string) (err error) {
 
 	// Verificar si el índice existe en la tabla.
 	indexNames := d.store.Get("indexNames")
@@ -12,8 +16,8 @@ func (d *indexDB) fieldIndexOK(table, field_name string) (err string) {
 
 	// Verificar si el índice existe en la tabla.
 	if !indexSet[field_name] {
-		return "El índice: " + field_name + "no existe en la tabla:" + table
+		return Err("Index:", field_name, "does not exist in table:", table)
 	}
 
-	return ""
+	return nil
 }
