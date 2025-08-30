@@ -2,11 +2,9 @@ package indexdb
 
 import (
 	"syscall/js"
-
-	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) CreateTablesInDB(objects []*model.Object, response func(err string)) {
+func (d *indexDB) CreateTablesInDB(objects []*Object, response func(err string)) {
 
 	d.response = response
 

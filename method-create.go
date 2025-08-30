@@ -3,7 +3,6 @@ package indexdb
 import (
 	"syscall/js"
 
-	"github.com/cdvelop/model"
 	"github.com/cdvelop/tinystring"
 )
 
@@ -25,7 +24,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 
 	d.prepareDataIN(items, true)
 
-	pk_field := model.PREFIX_ID_NAME + table_name
+	pk_field := PREFIX_ID_NAME + table_name
 
 	// CHECK ID
 	for i, data := range d.data_in_any {
@@ -43,10 +42,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 			}
 
 			//agregar id al objeto si este no existe
-			id, err = d.GetNewID() //id nuevo
-			if err != "" {
-				return e + err
-			}
+			id = d.GetNewID() //id nuevo
 			// d.Log("NUEVO ID GENERADO:", id)
 			if !tinystring.Contains(id.(string), ".") {
 				return e + "id generado no contiene numero de usuario"

@@ -1,11 +1,15 @@
 module github.com/cdvelop/indexdb
 
-go 1.22.0
+go 1.24.4
 
-toolchain go1.24.3
+toolchain go1.24.6
 
 require (
-	github.com/cdvelop/model v0.0.120
-	github.com/cdvelop/tinystring v0.1.64
-	github.com/cdvelop/unixid v0.0.52
+	github.com/cdvelop/tinystring v0.4.0
+	github.com/cdvelop/unixid v0.1.0
+)
+
+require (
+	github.com/cdvelop/tinyreflect v0.0.40 // indirect
+	github.com/cdvelop/tinytime v0.1.0 // indirect
 )

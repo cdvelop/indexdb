@@ -2,11 +2,9 @@ package indexdb
 
 import (
 	"syscall/js"
-
-	"github.com/cdvelop/model"
 )
 
-func (d indexDB) processReadItem(p *model.ReadParams, data js.Value, r *model.ReadResults) {
+func (d indexDB) processReadItem(p *ReadParams, data js.Value, r *ReadResults) {
 
 	out_any := make(map[string]interface{})
 	out_string := map[string]string{}

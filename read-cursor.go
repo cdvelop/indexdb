@@ -2,11 +2,9 @@ package indexdb
 
 import (
 	"syscall/js"
-
-	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) readPrepareCursor(r *model.ReadParams) (err string) {
+func (d *indexDB) readPrepareCursor(r *ReadParams) (err string) {
 	const e = "readPrepareCursor error "
 
 	if d.err = d.checkTableStatus("read", r.FROM_TABLE); d.err != "" {
@@ -28,7 +26,7 @@ func (d *indexDB) readPrepareCursor(r *model.ReadParams) (err string) {
 
 	case r.ID != "":
 
-		field_name := model.PREFIX_ID_NAME + r.FROM_TABLE
+		field_name := PREFIX_ID_NAME + r.FROM_TABLE
 
 		if d.err = d.fieldIndexOK(r.FROM_TABLE, field_name); d.err != "" {
 			return e + d.err
