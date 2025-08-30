@@ -4,7 +4,7 @@ import (
 	"syscall/js"
 
 	"github.com/cdvelop/model"
-	"github.com/cdvelop/strings"
+	"github.com/cdvelop/tinystring"
 )
 
 var blob_exist bool
@@ -48,7 +48,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 				return e + err
 			}
 			// d.Log("NUEVO ID GENERADO:", id)
-			if strings.Contains(id.(string), ".") == 0 {
+			if !tinystring.Contains(id.(string), ".") {
 				return e + "id generado no contiene numero de usuario"
 			}
 

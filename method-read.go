@@ -4,7 +4,7 @@ import (
 	"syscall/js"
 
 	"github.com/cdvelop/model"
-	"github.com/cdvelop/strings"
+	"github.com/cdvelop/tinystring"
 )
 
 func (d *indexDB) ReadAsyncDataDB(p *model.ReadParams, callback func(r *model.ReadResults, err string)) {
@@ -28,7 +28,7 @@ func (d *indexDB) ReadAsyncDataDB(p *model.ReadParams, callback func(r *model.Re
 
 			for _, wheres := range p.WHERE {
 				for key, search := range wheres {
-					if strings.Contains(data.Get(key).String(), search) == 0 {
+					if !tinystring.Contains(data.Get(key).String(), search) {
 						item.Call("continue")
 						return nil
 					}
