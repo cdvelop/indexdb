@@ -4,22 +4,24 @@ import (
 	"syscall/js"
 )
 
-func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []map[string]string, err string) {
-	const this = "ReadStringDataInDB "
+func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []map[string]string, err error) {
+	const this = "ReadStringDataInDB"
 
 	d.Log("info COMIENZO LECTURA")
 
 	chanResult := make(chan ReadResults)
 
-	d.readDataTwo(r, chanResult)
+	go d.readDataTwo(r, chanResult)
 
 	data := <-chanResult
 
 	d.Log("info FIN LECTURA")
-	d.Log("dataString", data.ResultsString)
-	// d.Log("erro", data.Error)
 
-	return
+	if data.Error != nil {
+		return nil, data.Error
+	}
+
+	return data.ResultsString, nil
 }
 
 func (d *indexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
@@ -29,9 +31,8 @@ func (d *indexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
 		ResultsAny:    []map[string]any{},
 	}
 
-	d.err = d.readPrepareCursor(r)
-	if d.err != "" {
-		// result.Error = err
+	if d.err = d.readPrepareCursor(r); d.err != nil {
+		result.Error = d.err
 		chanResult <- result
 		return
 	}
@@ -85,9 +86,9 @@ func (d *indexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
 				}
 
 				if r.RETURN_ANY {
-					// result.ResultsAny = append(result.ResultsAny, data_out_any)
+					result.ResultsAny = append(result.ResultsAny, data_out_any)
 				} else {
-					// result.ResultsStringing = append(resuResultsStringString, data_out_string)
+					result.ResultsString = append(result.ResultsString, data_out_string)
 				}
 
 				cursor.Call("continue")

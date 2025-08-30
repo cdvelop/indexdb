@@ -2,13 +2,15 @@ package indexdb
 
 import (
 	"syscall/js"
+
+	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) readPrepareCursor(r *ReadParams) (err string) {
-	const e = "readPrepareCursor error "
+func (d *indexDB) readPrepareCursor(r *ReadParams) (err error) {
+	const e = "readPrepareCursor error"
 
-	if d.err = d.checkTableStatus("read", r.FROM_TABLE); d.err != "" {
-		return e + d.err
+	if d.err = d.checkTableStatus("read", r.FROM_TABLE); d.err != nil {
+		return Errf("%s %v", e, d.err)
 	}
 
 	sort_order := "next"
@@ -17,9 +19,8 @@ func (d *indexDB) readPrepareCursor(r *ReadParams) (err string) {
 	}
 
 	// Obtener el almacén
-	d.err = d.prepareStore("read", r.FROM_TABLE)
-	if d.err != "" {
-		return e + d.err
+	if d.err = d.prepareStore("read", r.FROM_TABLE); d.err != nil {
+		return Errf("%s %v", e, d.err)
 	}
 
 	switch {
@@ -28,8 +29,8 @@ func (d *indexDB) readPrepareCursor(r *ReadParams) (err string) {
 
 		field_name := PREFIX_ID_NAME + r.FROM_TABLE
 
-		if d.err = d.fieldIndexOK(r.FROM_TABLE, field_name); d.err != "" {
-			return e + d.err
+		if d.err = d.fieldIndexOK(r.FROM_TABLE, field_name); d.err != nil {
+			return Errf("%s %v", e, d.err)
 		}
 
 		rangeObj := js.Global().Get("IDBKeyRange").Call("only", r.ID)
@@ -38,8 +39,8 @@ func (d *indexDB) readPrepareCursor(r *ReadParams) (err string) {
 
 	case r.ORDER_BY != "":
 
-		if d.err = d.fieldIndexOK(r.FROM_TABLE, r.ORDER_BY); d.err != "" {
-			return e + d.err
+		if d.err = d.fieldIndexOK(r.FROM_TABLE, r.ORDER_BY); d.err != nil {
+			return Errf("%s %v", e, d.err)
 		}
 
 		index := d.store.Call("index", r.ORDER_BY)
@@ -50,5 +51,5 @@ func (d *indexDB) readPrepareCursor(r *ReadParams) (err string) {
 		d.cursor = d.store.Call("openCursor")
 	}
 
-	return
+	return nil
 }

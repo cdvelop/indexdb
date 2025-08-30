@@ -20,6 +20,7 @@ type ReadParams struct {
 type ReadResults struct {
 	ResultsString []map[string]string
 	ResultsAny    []map[string]any
+	Error         error
 }
 
 type MainHandler struct {
@@ -66,11 +67,11 @@ type DataBaseAdapter interface {
 	RunOnClientDB() bool
 	Lock()
 	Unlock()
-	CreateObjectsInDB(table_name string, on_server_too bool, items any) (err string)
-	ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, err string))
-	ReadSyncDataDB(p *ReadParams, data ...map[string]string) (result []map[string]string, err string)
-	DeleteObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err string)
-	UpdateObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err string)
+	CreateObjectsInDB(table_name string, on_server_too bool, items any) (err error)
+	ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, err error))
+	ReadSyncDataDB(p *ReadParams, data ...map[string]string) (result []map[string]string, err error)
+	DeleteObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err error)
+	UpdateObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err error)
 }
 
 type TimeAdapter interface {
@@ -102,5 +103,5 @@ type indexDB struct {
 	store       js.Value
 	cursor      js.Value
 	result      js.Value
-	err         string
+	err         error
 }

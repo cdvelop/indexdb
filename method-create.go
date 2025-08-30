@@ -3,23 +3,22 @@ package indexdb
 import (
 	"syscall/js"
 
-	"github.com/cdvelop/tinystring"
+	. "github.com/cdvelop/tinystring"
 )
 
 var blob_exist bool
 var blob_file interface{}
 
 // items support: []map[string]string or map[string]string
-func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items any) (err string) {
+func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items any) (err error) {
 
 	blob_exist = false
 	blob_file = nil
 
-	const e = "indexdb create "
+	const e = "indexdb create"
 
-	d.err = d.prepareStore("create", table_name)
-	if d.err != "" {
-		return e + d.err
+	if d.err = d.prepareStore("create", table_name); d.err != nil {
+		return Errf("%s %v", e, d.err)
 	}
 
 	d.prepareDataIN(items, true)
@@ -36,7 +35,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 		if !id_exist || id.(string) == "" {
 
 			if !on_server_too { // si no requiere backup es un objeto sin id del servidor retornamos error
-				err := e + "error data proveniente del servidor sin id en tabla: " + table_name
+				err := Errf("%s error server data without id in table: %s", e, table_name)
 				d.Log(err, data)
 				return err
 			}
@@ -44,8 +43,8 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 			//agregar id al objeto si este no existe
 			id = d.GetNewID() //id nuevo
 			// d.Log("NUEVO ID GENERADO:", id)
-			if !tinystring.Contains(id.(string), ".") {
-				return e + "id generado no contiene numero de usuario"
+			if !Contains(id.(string), ".") {
+				return Errf("%s generated id does not contain user number", e)
 			}
 
 			data[pk_field] = id
@@ -73,7 +72,7 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 		// Inserta cada elemento en el almacén de objetos
 		result := d.store.Call("add", data)
 		if result.IsNull() {
-			return "error al crear elemento en la db tabla: " + table_name + " id: " + data[pk_field].(string)
+			return Err("error creating element in db table:", table_name, "id:", data[pk_field].(string))
 		}
 		// d.Log("resultado:", result)
 
@@ -98,5 +97,5 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 
 	}
 
-	return ""
+	return nil
 }
