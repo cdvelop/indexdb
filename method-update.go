@@ -1,7 +1,5 @@
 package indexdb
 
-import "github.com/cdvelop/model"
-
 func (d *indexDB) UpdateObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err string) {
 
 	const e = "UpdateObjectsInDB "
@@ -21,7 +19,7 @@ func (d *indexDB) UpdateObjectsInDB(table_name string, on_server_too bool, all_d
 	for _, obj := range d.data_in_any {
 
 		// Obtener el ID del objeto
-		id, ok := obj[model.PREFIX_ID_NAME+table_name].(string)
+		id, ok := obj[PREFIX_ID_NAME+table_name].(string)
 		if !ok || id == "" {
 			return e + "objeto invalido sin ID para actualizar "
 		}

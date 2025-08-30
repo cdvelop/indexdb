@@ -1,8 +1,6 @@
 package indexdb
 
-import "github.com/cdvelop/model"
-
-func (d *indexDB) createTable(o *model.Object) {
+func (d *indexDB) createTable(o *Object) {
 
 	if !o.NoAddObjectInDB {
 		// d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")

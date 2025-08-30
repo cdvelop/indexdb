@@ -3,13 +3,12 @@ package indexdb
 import (
 	"syscall/js"
 
-	"github.com/cdvelop/model"
 	"github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) ReadAsyncDataDB(p *model.ReadParams, callback func(r *model.ReadResults, err string)) {
+func (d *indexDB) ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, err string)) {
 
-	var result = &model.ReadResults{
+	var result = &ReadResults{
 		ResultsString: []map[string]string{},
 		ResultsAny:    []map[string]any{},
 	}
@@ -84,6 +83,6 @@ func (d *indexDB) ReadAsyncDataDB(p *model.ReadParams, callback func(r *model.Re
 
 }
 
-func (d *indexDB) ReadSyncDataDB(p *model.ReadParams, data ...map[string]string) (result []map[string]string, err string) {
+func (d *indexDB) ReadSyncDataDB(p *ReadParams, data ...map[string]string) (result []map[string]string, err string) {
 	return nil, "error ReadSyncDataDB no implementado en indexDB"
 }

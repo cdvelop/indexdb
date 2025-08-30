@@ -2,11 +2,9 @@ package indexdb
 
 import (
 	"syscall/js"
-
-	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) ReadStringDataInDBold(r *model.ReadParams) (out []map[string]string, err string) {
+func (d *indexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string, err string) {
 	const e = "ReadStringDataInDB error "
 
 	d.Log("info COMIENZO LECTURA")

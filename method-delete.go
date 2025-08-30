@@ -1,7 +1,5 @@
 package indexdb
 
-import "github.com/cdvelop/model"
-
 func (d *indexDB) DeleteObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err string) {
 
 	const e = "DeleteObjectsInDB "
@@ -16,7 +14,7 @@ func (d *indexDB) DeleteObjectsInDB(table_name string, on_server_too bool, all_d
 	}
 
 	for _, data := range all_data {
-		if id, exist := data[model.PREFIX_ID_NAME+table_name]; exist {
+		if id, exist := data[PREFIX_ID_NAME+table_name]; exist {
 			// elimina cada elemento en el almacén de objetos
 			d.result = d.store.Call("delete", id)
 

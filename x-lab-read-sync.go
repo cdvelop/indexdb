@@ -2,16 +2,14 @@ package indexdb
 
 import (
 	"syscall/js"
-
-	"github.com/cdvelop/model"
 )
 
-func (d *indexDB) ReadStringDataInDB(r *model.ReadParams) (out []map[string]string, err string) {
+func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []map[string]string, err string) {
 	const this = "ReadStringDataInDB "
 
 	d.Log("info COMIENZO LECTURA")
 
-	chanResult := make(chan model.ReadResults)
+	chanResult := make(chan ReadResults)
 
 	d.readDataTwo(r, chanResult)
 
@@ -24,9 +22,9 @@ func (d *indexDB) ReadStringDataInDB(r *model.ReadParams) (out []map[string]stri
 	return
 }
 
-func (d *indexDB) readDataTwo(r *model.ReadParams, chanResult chan model.ReadResults) {
+func (d *indexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
 
-	var result = model.ReadResults{
+	var result = ReadResults{
 		ResultsString: []map[string]string{},
 		ResultsAny:    []map[string]any{},
 	}

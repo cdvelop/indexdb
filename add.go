@@ -3,12 +3,11 @@ package indexdb
 import (
 	"syscall/js"
 
-	"github.com/cdvelop/model"
 	"github.com/cdvelop/unixid"
 )
 
 // run = RunBootData()
-func Add(h *model.MainHandler) (err string) {
+func Add(h *MainHandler) (err string) {
 
 	newDb := indexDB{
 		db_name:               "localdb",
@@ -23,7 +22,7 @@ func Add(h *model.MainHandler) (err string) {
 
 	h.DataBaseAdapter = &newDb
 
-	uid, err := unixid.NewHandler(h.TimeAdapter, newDb, h.SessionFrontendAdapter)
+	uid, err := unixid.NewUnixID(h)
 	if err != "" {
 		return err
 	}
