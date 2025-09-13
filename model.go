@@ -68,7 +68,7 @@ type DataBaseAdapter interface {
 	Lock()
 	Unlock()
 	CreateObjectsInDB(table_name string, on_server_too bool, items any) (err error)
-	ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, err error))
+	ReadAsync(p *ReadParams, callback func(r *ReadResults, err error))
 	ReadSyncDataDB(p *ReadParams, data ...map[string]string) (result []map[string]string, err error)
 	DeleteObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err error)
 	UpdateObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err error)

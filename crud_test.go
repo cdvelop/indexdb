@@ -82,7 +82,7 @@ func TestCreate(t *testing.T) {
 			ID:         "1",
 		}
 
-		db.ReadAsyncDataDB(readParams, func(r *ReadResults, errRead error) {
+		db.ReadAsync(readParams, func(r *ReadResults, errRead error) {
 			if errRead != nil {
 				t.Errorf("Failed to read data: %s", errRead)
 				done <- true
@@ -180,7 +180,7 @@ func TestDelete(t *testing.T) {
 			ID:         "6",
 		}
 
-		db.ReadAsyncDataDB(readParams, func(r *ReadResults, errRead error) {
+		db.ReadAsync(readParams, func(r *ReadResults, errRead error) {
 			if errRead != nil {
 				t.Errorf("Failed to read data: %s", errRead)
 				done <- true
@@ -273,7 +273,7 @@ func TestUpdate(t *testing.T) {
 			ID:         "5",
 		}
 
-		db.ReadAsyncDataDB(readParams, func(r *ReadResults, errRead error) {
+		db.ReadAsync(readParams, func(r *ReadResults, errRead error) {
 			if errRead != nil {
 				t.Errorf("Failed to read data: %s", errRead)
 				done <- true
@@ -357,7 +357,7 @@ func TestReadAll(t *testing.T) {
 			FROM_TABLE: "user",
 		}
 
-		db.ReadAsyncDataDB(readParams, func(r *ReadResults, errRead error) {
+		db.ReadAsync(readParams, func(r *ReadResults, errRead error) {
 			if errRead != nil {
 				t.Errorf("Failed to read data: %s", errRead)
 				done <- true
@@ -436,7 +436,7 @@ func TestRead(t *testing.T) {
 			ID:         "2",
 		}
 
-		db.ReadAsyncDataDB(readParams, func(r *ReadResults, errRead error) {
+		db.ReadAsync(readParams, func(r *ReadResults, errRead error) {
 			if errRead != nil {
 				t.Errorf("Failed to read data: %s", errRead)
 				done <- true

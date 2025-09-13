@@ -6,7 +6,7 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) ReadAsyncDataDB(p *ReadParams, callback func(r *ReadResults, err error)) {
+func (d *indexDB) ReadAsync(p *ReadParams, callback func(r *ReadResults, err error)) {
 
 	var result = &ReadResults{
 		ResultsString: []map[string]string{},
