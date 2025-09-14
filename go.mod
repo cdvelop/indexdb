@@ -11,5 +11,5 @@ require (
 
 require (
 	github.com/cdvelop/tinyreflect v0.0.40 // indirect
-	github.com/cdvelop/tinytime v0.0.15 // indirect
+	github.com/cdvelop/tinytime v0.1.2 // indirect
 )
