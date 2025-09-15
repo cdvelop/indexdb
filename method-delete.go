@@ -1,32 +1,61 @@
 package indexdb
 
 import (
+	"github.com/cdvelop/tinyreflect"
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) DeleteObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err error) {
+func (d *indexDB) Delete(table_name string, all_data ...interface{}) (err error) {
 
-	const e = "DeleteObjectsInDB"
-
-	if on_server_too {
-		d.BackupOneObjectType("delete", table_name, all_data)
-	}
+	const e = "Delete"
 
 	if d.err = d.prepareStore("delete", table_name); d.err != nil {
 		return Errf("%s %v", e, d.err)
 	}
 
-	for _, data := range all_data {
-		if id, exist := data[PREFIX_ID_NAME+table_name]; exist {
-			// elimina cada elemento en el almacén de objetos
-			d.result = d.store.Call("delete", id)
+	for _, item := range all_data {
 
-			if d.result.IsNull() {
-				return Errf("%s error when deleting in table: %s", e, table_name)
+		v := tinyreflect.ValueOf(item)
+
+		st := v.Type()
+
+		if st.Kind() == K.Struct {
+
+			structType := st.StructType()
+
+			found := false
+
+			for j, f := range structType.Fields {
+
+				// Check if this is the ID field by name
+				if IsPrimaryKey(f.Name.String(), table_name) {
+
+					fieldValue, _ := v.Field(j)
+
+					id, _ := fieldValue.Interface()
+
+					d.result = d.store.Call("delete", id)
+
+					if d.result.IsNull() {
+
+						return Errf("%s error when deleting in table: %s", e, table_name)
+
+					}
+
+					found = true
+
+					break
+
+				}
+
 			}
 
-		} else {
-			return Errf("%s id not found in table: %s", e, table_name)
+			if !found {
+
+				return Errf("%s id not found in table: %s", e, table_name)
+
+			}
+
 		}
 
 	}

@@ -1,50 +1,65 @@
 package indexdb
 
 import (
+	"github.com/cdvelop/tinyreflect"
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) createTable(o *Object) {
+// CreateTableIfNotExists creates a table for the given struct type if it doesn't exist
+func (d *indexDB) CreateTableIfNotExists(tableName string, structType interface{}) error {
+	// Check if table already exists
+	if d.TableExist(tableName) {
+		return nil
+	}
 
-	if !o.NoAddObjectInDB {
-		// d.Log("**** CREANDO TABLA: ", o.Table, "INDEX DB")
-		if len(o.Fields) != 0 {
+	// Create the table
+	return d.createTable(structType)
+}
 
-			pk_name := o.PrimaryKeyName()
+// createTable creates a table for the given struct type
+func (d *indexDB) createTable(structType interface{}) error {
+	st := tinyreflect.TypeOf(structType)
 
-			newTable := d.db.Call("createObjectStore", o.Table, map[string]interface{}{"keyPath": pk_name})
+	if st.Kind() == K.Struct {
+		structTypeInfo := st.StructType()
 
-			for _, f := range o.Fields {
+		table_name := st.Name()
 
-				if !f.NotRequiredInDB {
-					// Crear un índices para búsqueda campos principales
-					newTable.Call("createIndex", f.Name, f.Name, map[string]interface{}{"unique": f.Unique})
+		if len(structTypeInfo.Fields) != 0 {
+			pk_name := "id_" + table_name
+
+			// Create object store
+			newTable := d.db.Call("createObjectStore", table_name, map[string]interface{}{"keyPath": pk_name})
+
+			// Create indexes for fields
+			for _, f := range structTypeInfo.Fields {
+				fieldName := f.Name.String()
+				tag := f.Tag().Get("db")
+
+				// Skip ID field (it's the keyPath)
+				if IsPrimaryKey(fieldName, table_name) {
+					continue
+				}
+
+				// Create index if field has db tag or is marked as unique
+				if tag != "" {
+					unique := tag == "unique"
+					newTable.Call("createIndex", fieldName, fieldName, map[string]interface{}{"unique": unique})
 				}
 			}
 		}
-	}
-}
-
-func (d indexDB) checkTableStatus(operation, table_name string) (err error) {
-
-	if !d.db.Truthy() {
-		return Err(operation, "variable db not defined in index db", table_name)
-	}
-
-	if !d.TableExist(table_name) {
-		return Err("error action:", operation, ". table", table_name, "does not exist in indexdb")
 	}
 
 	return nil
 }
 
+// TableExist checks if a table exists in the database
 func (d indexDB) TableExist(table_name string) bool {
-
-	// Obtiene la lista de nombres de almacenes de objetos en la base de datos
+	// Get the list of object store names from the database
 	objectStoreNames := d.db.Get("objectStoreNames")
 	length := objectStoreNames.Length()
 
-	// Itera a través de los nombres de las tablas y verifica si la tabla ya existe
+	// Iterate through the table names and check if the table already exists
 	for i := 0; i < length; i++ {
 		name := objectStoreNames.Index(i).String()
 		if name == table_name {

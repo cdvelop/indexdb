@@ -11,14 +11,10 @@ import (
 func Add(h *MainHandler) (err error) {
 
 	newDb := indexDB{
-		db_name:               "localdb",
-		db:                    js.Value{},
-		http:                  h,
-		ObjectsHandlerAdapter: h,
-		BackupHandlerAdapter:  h,
-		response:              nil,
-		UnixID:                nil,
-		Logger:                h,
+		db_name: "localdb",
+		db:      js.Value{},
+		UnixID:  nil,
+		Logger:  h,
 	}
 
 	h.DataBaseAdapter = &newDb
@@ -32,10 +28,3 @@ func Add(h *MainHandler) (err error) {
 
 	return nil
 }
-
-func (indexDB) RunOnClientDB() bool { //true base de datos corre en el browser
-	return true
-}
-
-func (indexDB) Lock()   {}
-func (indexDB) Unlock() {}

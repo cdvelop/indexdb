@@ -36,8 +36,8 @@ func (d indexDB) processReadItem(p *ReadParams, data js.Value, r *ReadResults) {
 	}
 
 	if p.RETURN_ANY {
-		r.ResultsAny = append(r.ResultsAny, out_any)
+		r.Results = append(r.Results, out_any)
 	} else { //STRING RETURN
-		r.ResultsString = append(r.ResultsString, out_string)
+		r.Results = append(r.Results, out_string)
 	}
 }

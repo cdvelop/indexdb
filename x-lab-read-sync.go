@@ -4,7 +4,7 @@ import (
 	"syscall/js"
 )
 
-func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []map[string]string, err error) {
+func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []interface{}, err error) {
 	const this = "ReadStringDataInDB"
 
 	d.Log("info COMIENZO LECTURA")
@@ -21,14 +21,13 @@ func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []map[string]string, er
 		return nil, data.Error
 	}
 
-	return data.ResultsString, nil
+	return data.Results, nil
 }
 
 func (d *indexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
 
 	var result = ReadResults{
-		ResultsString: []map[string]string{},
-		ResultsAny:    []map[string]any{},
+		Results: []interface{}{},
 	}
 
 	if d.err = d.readPrepareCursor(r); d.err != nil {
@@ -86,9 +85,9 @@ func (d *indexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
 				}
 
 				if r.RETURN_ANY {
-					result.ResultsAny = append(result.ResultsAny, data_out_any)
+					result.Results = append(result.Results, data_out_any)
 				} else {
-					result.ResultsString = append(result.ResultsString, data_out_string)
+					result.Results = append(result.Results, data_out_string)
 				}
 
 				cursor.Call("continue")

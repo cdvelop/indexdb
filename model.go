@@ -6,57 +6,25 @@ import (
 	"github.com/cdvelop/unixid"
 )
 
-const PREFIX_ID_NAME = "id_"
-
 type ReadParams struct {
 	FROM_TABLE string
 	SORT_DESC  bool
 	ID         string
 	ORDER_BY   string
-	WHERE      []map[string]string
+	WHERE      []interface{}
 	RETURN_ANY bool
 }
 
 type ReadResults struct {
-	ResultsString []map[string]string
-	ResultsAny    []map[string]any
-	Error         error
+	Results []interface{}
+	Error   error
 }
 
 type MainHandler struct {
 	TimeAdapter
 	SessionFrontendAdapter
 	DataBaseAdapter
-	FetchAdapter
-	ObjectsHandlerAdapter
-	BackupHandlerAdapter
 	Logger
-}
-
-type Object struct {
-	Table           string
-	Fields          []Field
-	NoAddObjectInDB bool
-}
-
-type Field struct {
-	Name            string
-	NotRequiredInDB bool
-	Unique          bool
-}
-
-func (o *Object) PrimaryKeyName() string {
-	return PREFIX_ID_NAME + o.Table
-}
-
-type FetchAdapter interface{}
-
-type ObjectsHandlerAdapter interface {
-	GetAllObjects(all bool) []*Object
-}
-
-type BackupHandlerAdapter interface {
-	BackupOneObjectType(action string, table_name string, items any)
 }
 
 type Logger interface {
@@ -64,14 +32,11 @@ type Logger interface {
 }
 
 type DataBaseAdapter interface {
-	RunOnClientDB() bool
-	Lock()
-	Unlock()
-	CreateObjectsInDB(table_name string, on_server_too bool, items any) (err error)
-	ReadAsync(p *ReadParams, callback func(r *ReadResults, err error))
-	ReadSyncDataDB(p *ReadParams, data ...map[string]string) (result []map[string]string, err error)
-	DeleteObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err error)
-	UpdateObjectsInDB(table_name string, on_server_too bool, all_data ...map[string]string) (err error)
+	Create(table_name string, items []interface{}) (err error)
+	Read(p *ReadParams, callback func(r *ReadResults, err error))
+	ReadSync(p *ReadParams, data ...interface{}) (result []interface{}, err error)
+	Delete(table_name string, all_data ...interface{}) (err error)
+	Update(table_name string, all_data ...interface{}) (err error)
 }
 
 type TimeAdapter interface {
@@ -86,12 +51,7 @@ type indexDB struct {
 	db_name string
 	db      js.Value
 
-	http FetchAdapter
-	ObjectsHandlerAdapter
-	BackupHandlerAdapter
 	Logger
-
-	response func(err string)
 
 	*unixid.UnixID
 

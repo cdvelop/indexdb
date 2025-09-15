@@ -9,10 +9,6 @@ import (
 func (d *indexDB) readPrepareCursor(r *ReadParams) (err error) {
 	const e = "readPrepareCursor error"
 
-	if d.err = d.checkTableStatus("read", r.FROM_TABLE); d.err != nil {
-		return Errf("%s %v", e, d.err)
-	}
-
 	sort_order := "next"
 	if r.SORT_DESC {
 		sort_order = "prev"
@@ -27,7 +23,7 @@ func (d *indexDB) readPrepareCursor(r *ReadParams) (err error) {
 
 	case r.ID != "":
 
-		field_name := PREFIX_ID_NAME + r.FROM_TABLE
+		field_name := "id_" + r.FROM_TABLE
 
 		if d.err = d.fieldIndexOK(r.FROM_TABLE, field_name); d.err != nil {
 			return Errf("%s %v", e, d.err)

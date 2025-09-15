@@ -3,27 +3,81 @@ package indexdb
 import (
 	"syscall/js"
 
+	"github.com/cdvelop/tinyreflect"
 	. "github.com/cdvelop/tinystring"
 )
 
 var blob_exist bool
 var blob_file interface{}
 
-// items support: []map[string]string or map[string]string
-func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items any) (err error) {
+// items support: []interface{} (struct instances)
+func (d *indexDB) Create(table_name string, items []interface{}) (err error) {
 
 	blob_exist = false
 	blob_file = nil
 
 	const e = "indexdb create"
 
-	if d.err = d.prepareStore("create", table_name); d.err != nil {
+	if len(items) == 0 {
+		return nil
+	}
+
+	// Create table if it doesn't exist using the first item as template
+	if d.err = d.prepareStoreWithTableCheck("create", table_name, items[0]); d.err != nil {
 		return Errf("%s %v", e, d.err)
 	}
 
-	d.prepareDataIN(items, true)
+	d.data_in_any = make([]map[string]interface{}, len(items))
 
-	pk_field := PREFIX_ID_NAME + table_name
+	d.data_in_str = nil
+
+	pk_field := "id_" + table_name
+
+	for i, item := range items {
+
+		v := tinyreflect.ValueOf(item)
+
+		st := v.Type()
+
+		if st.Kind() == K.Struct {
+
+			m := make(map[string]interface{})
+
+			structType := st.StructType()
+
+			for j, f := range structType.Fields {
+
+				fieldName := f.Name.String()
+
+				tag := f.Tag().Get("db")
+
+				// Use tag value as field name if present, otherwise use field name
+				if tag != "" {
+					fieldName = tag
+				}
+
+				fieldValue, _ := v.Field(j)
+
+				val, _ := fieldValue.Interface()
+
+				// Check if this is the ID field by name
+				if IsPrimaryKey(f.Name.String(), table_name) {
+
+					m[pk_field] = val
+
+				} else {
+
+					m[fieldName] = val
+
+				}
+
+			}
+
+			d.data_in_any[i] = m
+
+		}
+
+	}
 
 	// CHECK ID
 	for i, data := range d.data_in_any {
@@ -33,13 +87,6 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 		// d.Log("DATA table_name DB", table_name, "id_exist:", id_exist)
 
 		if !id_exist || id.(string) == "" {
-
-			if !on_server_too { // si no requiere backup es un objeto sin id del servidor retornamos error
-				err := Errf("%s error server data without id in table: %s", e, table_name)
-				d.Log(err, data)
-				return err
-			}
-
 			//agregar id al objeto si este no existe
 			id = d.GetNewID() //id nuevo
 			// d.Log("NUEVO ID GENERADO:", id)
@@ -59,10 +106,6 @@ func (d *indexDB) CreateObjectsInDB(table_name string, on_server_too bool, items
 
 			d.data_in_any[i][pk_field] = id.(string)
 		}
-	}
-
-	if on_server_too {
-		d.BackupOneObjectType("create", table_name, items)
 	}
 
 	// fmt.Println("DATA IN INDEX DB:", d.data_in_any)

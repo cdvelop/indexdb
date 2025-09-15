@@ -6,11 +6,10 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) ReadAsync(p *ReadParams, callback func(r *ReadResults, err error)) {
+func (d *indexDB) Read(p *ReadParams, callback func(r *ReadResults, err error)) {
 
 	var result = &ReadResults{
-		ResultsString: []map[string]string{},
-		ResultsAny:    []map[string]any{},
+		Results: []interface{}{},
 	}
 
 	d.err = d.readPrepareCursor(p)
@@ -26,10 +25,12 @@ func (d *indexDB) ReadAsync(p *ReadParams, callback func(r *ReadResults, err err
 			data := item.Get("value")
 
 			for _, wheres := range p.WHERE {
-				for key, search := range wheres {
-					if !Contains(data.Get(key).String(), search) {
-						item.Call("continue")
-						return nil
+				if w, ok := wheres.(map[string]string); ok {
+					for key, search := range w {
+						if !Contains(data.Get(key).String(), search) {
+							item.Call("continue")
+							return nil
+						}
 					}
 				}
 			}
@@ -68,9 +69,9 @@ func (d *indexDB) ReadAsync(p *ReadParams, callback func(r *ReadResults, err err
 			}
 
 			if p.RETURN_ANY {
-				result.ResultsAny = append(result.ResultsAny, data_out_any)
+				result.Results = append(result.Results, data_out_any)
 			} else {
-				result.ResultsString = append(result.ResultsString, data_out_string)
+				result.Results = append(result.Results, data_out_string)
 			}
 
 			item.Call("continue")
@@ -83,6 +84,6 @@ func (d *indexDB) ReadAsync(p *ReadParams, callback func(r *ReadResults, err err
 
 }
 
-func (d *indexDB) ReadSyncDataDB(p *ReadParams, data ...map[string]string) (result []map[string]string, err error) {
+func (d *indexDB) ReadSync(p *ReadParams, data ...interface{}) (result []interface{}, err error) {
 	return nil, Err("error ReadSyncDataDB not implemented in indexDB")
 }
