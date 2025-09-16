@@ -31,12 +31,18 @@ func (d *IndexDB) Create(table_name string, items ...any) (err error) {
 
 	// Find primary key field
 	pk_field := ""
+	pk_index := -1
 	if len(items) > 0 {
 		v := tinyreflect.ValueOf(items[0])
+		isPtr := v.Kind() == K.Pointer
+		if isPtr {
+			elem, _ := v.Elem()
+			v = elem
+		}
 		st := v.Type()
 		if st.Kind() == K.Struct {
 			structType := st.StructType()
-			for _, f := range structType.Fields {
+			for i, f := range structType.Fields {
 				fieldName := f.Name.String()
 				_, isPK := IDorPrimaryKey(table_name, fieldName)
 				if isPK {
@@ -44,6 +50,7 @@ func (d *IndexDB) Create(table_name string, items ...any) (err error) {
 						return Errf("%s multiple primary keys found", e)
 					}
 					pk_field = fieldName
+					pk_index = i
 				}
 			}
 		}
@@ -55,6 +62,11 @@ func (d *IndexDB) Create(table_name string, items ...any) (err error) {
 	for i, item := range items {
 
 		v := tinyreflect.ValueOf(item)
+		isPtr := v.Kind() == K.Pointer
+		if isPtr {
+			elem, _ := v.Elem()
+			v = elem
+		}
 
 		st := v.Type()
 
@@ -109,6 +121,17 @@ func (d *IndexDB) Create(table_name string, items ...any) (err error) {
 
 		// si todo esta ok retornamos el id
 		d.data[i][pk_field] = id.(string)
+	}
+
+	// Set ID back to structs if they are pointers
+	for i, item := range items {
+		v := tinyreflect.ValueOf(item)
+		isPtr := v.Kind() == K.Pointer
+		if isPtr && pk_index >= 0 {
+			elem, _ := v.Elem()
+			fieldVal, _ := elem.Field(pk_index)
+			fieldVal.SetString(d.data[i][pk_field].(string))
+		}
 	}
 
 	// fmt.Println("DATA IN INDEX DB:", d.data)
