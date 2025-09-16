@@ -106,7 +106,7 @@ func (d *IndexDB) upgradeneeded(this js.Value, p []js.Value) any {
 			continue
 		}
 
-		d.logger("**** CREANDO TABLA: ", t.StructName())
+		// d.logger("**** CREANDO TABLA: ", t.StructName())
 
 		err := d.createTable(t.StructName(), table)
 		if err != nil {
@@ -116,7 +116,22 @@ func (d *IndexDB) upgradeneeded(this js.Value, p []js.Value) any {
 
 	}
 
-	d.initOnce.Do(func() { d.initCompleted = true; close(d.initDone) })
+	// Wait for the version change transaction to complete
+	transaction := p[0].Get("target").Get("transaction")
+	transaction.Call("addEventListener", "complete", js.FuncOf(func(this js.Value, p []js.Value) any {
+		d.initOnce.Do(func() { d.initCompleted = true; close(d.initDone) })
+		return nil
+	}))
+	transaction.Call("addEventListener", "error", js.FuncOf(func(this js.Value, p []js.Value) any {
+		d.logger("version change transaction error")
+		d.initOnce.Do(func() { d.initCompleted = true; close(d.initDone) })
+		return nil
+	}))
+	transaction.Call("addEventListener", "abort", js.FuncOf(func(this js.Value, p []js.Value) any {
+		d.logger("version change transaction aborted")
+		d.initOnce.Do(func() { d.initCompleted = true; close(d.initDone) })
+		return nil
+	}))
 
 	return nil
 }

@@ -68,13 +68,6 @@ func (d *IndexDB) Create(table_name string, items ...any) (err error) {
 
 				fieldName := f.Name.String()
 
-				tag := f.Tag().Get("db")
-
-				// Use tag value as field name if present, otherwise use field name
-				if tag != "" {
-					fieldName = tag
-				}
-
 				fieldValue, _ := v.Field(j)
 
 				val, _ := fieldValue.Interface()

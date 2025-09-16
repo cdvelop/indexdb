@@ -30,11 +30,15 @@ func TestCreateTableIfNotExists(t *testing.T) {
 		t.Fatal("Table 'product' should exist")
 	}
 
-	/* 	// create User without id expected id to be auto generated
-	   	userOne := tests.User{Name: "Alice", Email: "alice@example.com"}
-	   	err := db.Create("user", userOne)
-	   	if err != nil {
-	   		t.Fatalf("Failed to create user: %v", err)
-	   	} */
+	// create User without id expected id to be auto generated
+	userOne := tests.User{Name: "Alice", Email: "alice@example.com"}
+	err := db.Create("user", userOne)
+	if err != nil {
+		t.Fatalf("Failed to create user: %v", err)
+	}
+
+	if userOne.ID == "" {
+		t.Fatal("User ID should be auto-generated")
+	}
 
 }
