@@ -1,4 +1,4 @@
-package helpers
+package tests
 
 import (
 	"fmt"
@@ -45,4 +45,8 @@ type Product struct {
 	IDProduct string
 	Name      string
 	Price     float64
+}
+
+func (p Product) StructName() string {
+	return "product"
 }

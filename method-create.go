@@ -8,10 +8,10 @@ import (
 )
 
 var blob_exist bool
-var blob_file interface{}
+var blob_file any
 
-// items support: []interface{} (struct instances)
-func (d *IndexDB) Create(table_name string, items []interface{}) (err error) {
+// items support: []any (struct instances)
+func (d *IndexDB) Create(table_name string, items ...any) (err error) {
 
 	blob_exist = false
 	blob_file = nil
@@ -27,7 +27,7 @@ func (d *IndexDB) Create(table_name string, items []interface{}) (err error) {
 		return Errf("%s %v", e, d.err)
 	}
 
-	d.data = make([]map[string]interface{}, len(items))
+	d.data = make([]map[string]any, len(items))
 
 	// Find primary key field
 	pk_field := ""
@@ -60,7 +60,7 @@ func (d *IndexDB) Create(table_name string, items []interface{}) (err error) {
 
 		if st.Kind() == K.Struct {
 
-			m := make(map[string]interface{})
+			m := make(map[string]any)
 
 			structType := st.StructType()
 
@@ -129,13 +129,13 @@ func (d *IndexDB) Create(table_name string, items []interface{}) (err error) {
 		}
 		// d.Logger("resultado:", result)
 
-		// result.Call("addEventListener", "success", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+		// result.Call("addEventListener", "success", js.FuncOf(func(this js.Value, p []js.Value) any {
 		// 	d.Logger("Elemento creado con éxito:", data)
 		// 	return nil
 		// }))
 
 		// Manejar la respuesta de manera asincrónica
-		result.Call("addEventListener", "error", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
+		result.Call("addEventListener", "error", js.FuncOf(func(this js.Value, p []js.Value) any {
 			// Log más detalles sobre el error
 			errorObject := p[0].Get("target").Get("error")
 			errorMessage := errorObject.Get("message").String()

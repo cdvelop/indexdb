@@ -5,7 +5,7 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *IndexDB) Delete(table_name string, all_data ...interface{}) (err error) {
+func (d *IndexDB) Delete(table_name string, items ...any) (err error) {
 
 	const e = "Delete"
 
@@ -13,7 +13,7 @@ func (d *IndexDB) Delete(table_name string, all_data ...interface{}) (err error)
 		return Errf("%s %v", e, d.err)
 	}
 
-	for _, item := range all_data {
+	for _, item := range items {
 
 		v := tinyreflect.ValueOf(item)
 

@@ -1,6 +1,8 @@
 package indexdb
 
 import (
+	"sync"
+
 	. "github.com/cdvelop/tinystring"
 	"syscall/js"
 )
@@ -24,13 +26,17 @@ type IndexDB struct {
 	idGenerator
 
 	//DATA IN TO CREATE, UPDATE
-	data []map[string]interface{}
+	data []map[string]any
 
 	transaction js.Value
 	store       js.Value
 	cursor      js.Value
 	result      js.Value
 	err         error
+
+	initDone      chan struct{}
+	initOnce      sync.Once
+	initCompleted bool
 }
 
 // New creates a new IndexDB instance with the given database name, ID generator, and logger.
@@ -45,6 +51,7 @@ func New(dbName string, idg idGenerator, logger func(...any)) *IndexDB {
 		db:          js.Value{},
 		idGenerator: idg,
 		logger:      logger,
+		initDone:    make(chan struct{}, 1),
 	}
 
 	return &idb
@@ -67,6 +74,7 @@ func (d *IndexDB) InitDB(structTables ...any) {
 	db.Call("addEventListener", "success", js.FuncOf(d.openExistingDB))
 	db.Call("addEventListener", "upgradeneeded", js.FuncOf(d.upgradeneeded))
 
+	<-d.initDone // wait until init is done
 }
 
 func (d *IndexDB) open(p *js.Value, message string) (err error) {
@@ -82,7 +90,7 @@ func (d *IndexDB) open(p *js.Value, message string) (err error) {
 	return nil
 }
 
-func (d *IndexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
+func (d *IndexDB) upgradeneeded(this js.Value, p []js.Value) any {
 
 	err := d.open(&p[0], "upgradeneeded")
 	if err != nil {
@@ -108,22 +116,28 @@ func (d *IndexDB) upgradeneeded(this js.Value, p []js.Value) interface{} {
 
 	}
 
+	d.initOnce.Do(func() { d.initCompleted = true; close(d.initDone) })
+
 	return nil
 }
 
-func (d *IndexDB) showDbError(this js.Value, p []js.Value) interface{} {
+func (d *IndexDB) showDbError(this js.Value, p []js.Value) any {
 	d.logger("indexDB Error", p[0])
 	return nil
 }
 
-func (d *IndexDB) openExistingDB(this js.Value, p []js.Value) interface{} {
+func (d *IndexDB) openExistingDB(this js.Value, p []js.Value) any {
 	err := d.open(&p[0], "OPEN")
 	if err != nil {
 		d.logger("open existing db error:", err)
 		return nil
 	}
 
-	d.logger("open existing db success")
+	if !d.initCompleted {
+		d.logger("open existing db success")
+	}
+
+	d.initOnce.Do(func() { d.initCompleted = true; close(d.initDone) })
 
 	return nil
 }

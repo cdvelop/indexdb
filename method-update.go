@@ -5,22 +5,20 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *IndexDB) Update(table_name string, all_data ...interface{}) (err error) {
+func (d *IndexDB) Update(table_name string, items ...any) (err error) {
 
 	const e = "Update"
 	// Obtener el almacén
-	if len(all_data) == 0 {
+	if len(items) == 0 {
 		return Err("no data to update table", table_name)
 	}
 
 	// Create table if it doesn't exist using the first item as template
-	if d.err = d.prepareStoreWithTableCheck("update", table_name, all_data[0]); d.err != nil {
+	if d.err = d.prepareStoreWithTableCheck("update", table_name, items[0]); d.err != nil {
 		return Errf("%s %v", e, d.err)
 	}
 
-	items := all_data
-
-	d.data = make([]map[string]interface{}, len(items))
+	d.data = make([]map[string]any, len(items))
 
 	// Find primary key field
 	pk_field := ""

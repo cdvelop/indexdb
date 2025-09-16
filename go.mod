@@ -9,6 +9,6 @@ require (
 	github.com/cdvelop/tinystring v0.7.0
 )
 
-require github.com/cdvelop/wasmtest v0.0.9 // indirect
+require github.com/cdvelop/wasmtest v0.0.9
 
 replace github.com/cdvelop/tinyreflect => ../tinyreflect

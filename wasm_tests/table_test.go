@@ -6,7 +6,7 @@ package wasmtests_test
 import (
 	"testing"
 
-	"github.com/cdvelop/indexdb/helpers"
+	"github.com/cdvelop/indexdb/tests"
 )
 
 // TestCreateTableIfNotExists tests the CreateTableIfNotExists function
@@ -16,7 +16,25 @@ func TestCreateTableIfNotExists(t *testing.T) {
 		t.Log(args...)
 	}
 
-	db := helpers.SetupDB(logger, "test_db_create_table")
+	// Setup the database
+	db := tests.SetupDB(logger)
 
-	db.InitDB()
+	// add tables
+	db.InitDB(tests.User{}, tests.Product{})
+
+	if !db.TableExist("user") {
+		t.Fatal("Table 'user' should exist")
+	}
+
+	if !db.TableExist("product") {
+		t.Fatal("Table 'product' should exist")
+	}
+
+	/* 	// create User without id expected id to be auto generated
+	   	userOne := tests.User{Name: "Alice", Email: "alice@example.com"}
+	   	err := db.Create("user", userOne)
+	   	if err != nil {
+	   		t.Fatalf("Failed to create user: %v", err)
+	   	} */
+
 }
