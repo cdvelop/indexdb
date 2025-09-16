@@ -24,6 +24,11 @@ func (d *IndexDB) Update(table_name string, items ...any) (err error) {
 	pk_field := ""
 	if len(items) > 0 {
 		v := tinyreflect.ValueOf(items[0])
+		isPtr := v.Kind() == K.Pointer
+		if isPtr {
+			elem, _ := v.Elem()
+			v = elem
+		}
 		st := v.Type()
 		if st.Kind() == K.Struct {
 			structType := st.StructType()
@@ -46,6 +51,11 @@ func (d *IndexDB) Update(table_name string, items ...any) (err error) {
 	for i, item := range items {
 
 		v := tinyreflect.ValueOf(item)
+		isPtr := v.Kind() == K.Pointer
+		if isPtr {
+			elem, _ := v.Elem()
+			v = elem
+		}
 
 		st := v.Type()
 
