@@ -4,7 +4,7 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) fieldIndexOK(table, field_name string) (err error) {
+func (d *IndexDB) fieldIndexOK(table, field_name string) (err error) {
 
 	// Verificar si el índice existe en la tabla.
 	indexNames := d.store.Get("indexNames")

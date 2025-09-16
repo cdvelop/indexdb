@@ -5,12 +5,12 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) Update(table_name string, all_data ...interface{}) (err error) {
+func (d *IndexDB) Update(table_name string, all_data ...interface{}) (err error) {
 
 	const e = "Update"
 	// Obtener el almacén
 	if len(all_data) == 0 {
-		return nil
+		return Err("no data to update table", table_name)
 	}
 
 	// Create table if it doesn't exist using the first item as template
@@ -20,9 +20,30 @@ func (d *indexDB) Update(table_name string, all_data ...interface{}) (err error)
 
 	items := all_data
 
-	d.data_in_any = make([]map[string]interface{}, len(items))
+	d.data = make([]map[string]interface{}, len(items))
 
-	d.data_in_str = nil
+	// Find primary key field
+	pk_field := ""
+	if len(items) > 0 {
+		v := tinyreflect.ValueOf(items[0])
+		st := v.Type()
+		if st.Kind() == K.Struct {
+			structType := st.StructType()
+			for _, f := range structType.Fields {
+				fieldName := f.Name.String()
+				_, isPK := IDorPrimaryKey(table_name, fieldName)
+				if isPK {
+					if pk_field != "" {
+						return Errf("%s multiple primary keys found", e)
+					}
+					pk_field = fieldName
+				}
+			}
+		}
+	}
+	if pk_field == "" {
+		return Errf("%s no primary key found", e)
+	}
 
 	for i, item := range items {
 
@@ -51,10 +72,9 @@ func (d *indexDB) Update(table_name string, all_data ...interface{}) (err error)
 
 				val, _ := fieldValue.Interface()
 
-				// Check if this is the ID field by name
-				if IsPrimaryKey(f.Name.String(), table_name) {
-
-					pk_field := "id_" + table_name
+				// Check if this is the primary key field
+				_, isPK := IDorPrimaryKey(table_name, f.Name.String())
+				if isPK {
 
 					m[pk_field] = val
 
@@ -66,17 +86,17 @@ func (d *indexDB) Update(table_name string, all_data ...interface{}) (err error)
 
 			}
 
-			d.data_in_any[i] = m
+			d.data[i] = m
 
 		}
 
 	}
 
 	// Iterar sobre los datos a actualizar
-	for _, obj := range d.data_in_any {
+	for _, obj := range d.data {
 
 		// Obtener el ID del objeto
-		id, ok := obj["id_"+table_name].(string)
+		id, ok := obj[pk_field].(string)
 		if !ok || id == "" {
 			return Errf("%s invalid object without ID to update", e)
 		}

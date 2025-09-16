@@ -4,10 +4,10 @@ import (
 	"syscall/js"
 )
 
-func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []interface{}, err error) {
+func (d *IndexDB) ReadStringDataInDB(r *ReadParams) (out []interface{}, err error) {
 	const this = "ReadStringDataInDB"
 
-	d.Log("info COMIENZO LECTURA")
+	d.logger("info COMIENZO LECTURA")
 
 	chanResult := make(chan ReadResults)
 
@@ -15,7 +15,7 @@ func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []interface{}, err erro
 
 	data := <-chanResult
 
-	d.Log("info FIN LECTURA")
+	d.logger("info FIN LECTURA")
 
 	if data.Error != nil {
 		return nil, data.Error
@@ -24,7 +24,7 @@ func (d *indexDB) ReadStringDataInDB(r *ReadParams) (out []interface{}, err erro
 	return data.Results, nil
 }
 
-func (d *indexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
+func (d *IndexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
 
 	var result = ReadResults{
 		Results: []interface{}{},
@@ -93,7 +93,7 @@ func (d *indexDB) readDataTwo(r *ReadParams, chanResult chan ReadResults) {
 				cursor.Call("continue")
 
 			} else {
-				d.Log("info Fin de los datos.")
+				d.logger("info Fin de los datos.")
 				then <- true
 			}
 			return nil

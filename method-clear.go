@@ -4,7 +4,7 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) ClearAllTableDataInDB(tables ...string) (err error) {
+func (d *IndexDB) ClearAllTableDataInDB(tables ...string) (err error) {
 	const e = "ClearAllTableDataInDB error"
 	for _, table_name := range tables {
 

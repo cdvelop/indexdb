@@ -5,7 +5,7 @@ import (
 )
 
 // action create,read, delete, update
-func (d *indexDB) prepareStore(action, table_name string) (err error) {
+func (d *IndexDB) prepareStore(action, table_name string) (err error) {
 
 	var readwrite = "readonly"
 	if action != "read" {
@@ -26,7 +26,7 @@ func (d *indexDB) prepareStore(action, table_name string) (err error) {
 }
 
 // prepareStoreWithTableCheck prepares the store and creates table if needed
-func (d *indexDB) prepareStoreWithTableCheck(action, table_name string, sampleStruct interface{}) (err error) {
+func (d *IndexDB) prepareStoreWithTableCheck(action, table_name string, sampleStruct interface{}) (err error) {
 	// Create table if it doesn't exist
 	if err = d.CreateTableIfNotExists(table_name, sampleStruct); err != nil {
 		return err

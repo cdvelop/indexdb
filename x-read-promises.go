@@ -6,10 +6,10 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string, err error) {
+func (d *IndexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string, err error) {
 	const e = "ReadStringDataInDB error"
 
-	d.Log("info COMIENZO LECTURA")
+	d.logger("info COMIENZO LECTURA")
 
 	// d.readParams = r
 
@@ -21,12 +21,12 @@ func (d *indexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string,
 	// Define las funciones resolve y reject
 	resolve := js.FuncOf(func(e js.Value, args []js.Value) interface{} {
 		// manejar resolve
-		d.Log("resolve nada:", args[0])
+		d.logger("resolve nada:", args[0])
 		return nil
 	})
 	reject := js.FuncOf(func(e js.Value, args []js.Value) interface{} {
 		// manejar reject
-		d.Log("reject:", args[0])
+		d.logger("reject:", args[0])
 		return nil
 	})
 
@@ -37,18 +37,18 @@ func (d *indexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string,
 	promise.Call("then", js.FuncOf(func(e js.Value, args []js.Value) interface{} {
 		// manejar resultado
 
-		d.Log("info then datos", args[0])
+		d.logger("info then datos", args[0])
 
 		return nil
 
 	}))
 
-	d.Log("info FIN LECTURA")
+	d.logger("info FIN LECTURA")
 
 	return nil, nil
 }
 
-func (d *indexDB) onSuccess(resolve, reject js.Func) js.Func {
+func (d *IndexDB) onSuccess(resolve, reject js.Func) js.Func {
 	return js.FuncOf(func(e js.Value, args []js.Value) interface{} {
 
 		// Manejador de esta Promesa.
@@ -78,7 +78,7 @@ func (d *indexDB) onSuccess(resolve, reject js.Func) js.Func {
 						item.Call("continue")
 					} else {
 						// El cursor ha llegado al final de los objetos en el almacén
-						d.Log("Fin de los datos")
+						d.logger("Fin de los datos")
 						// Aquí podrías resolver la promesa con los datos acumulados
 						resolve.Invoke(itemsOut)
 					}

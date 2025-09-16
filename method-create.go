@@ -11,7 +11,7 @@ var blob_exist bool
 var blob_file interface{}
 
 // items support: []interface{} (struct instances)
-func (d *indexDB) Create(table_name string, items []interface{}) (err error) {
+func (d *IndexDB) Create(table_name string, items []interface{}) (err error) {
 
 	blob_exist = false
 	blob_file = nil
@@ -27,11 +27,30 @@ func (d *indexDB) Create(table_name string, items []interface{}) (err error) {
 		return Errf("%s %v", e, d.err)
 	}
 
-	d.data_in_any = make([]map[string]interface{}, len(items))
+	d.data = make([]map[string]interface{}, len(items))
 
-	d.data_in_str = nil
-
-	pk_field := "id_" + table_name
+	// Find primary key field
+	pk_field := ""
+	if len(items) > 0 {
+		v := tinyreflect.ValueOf(items[0])
+		st := v.Type()
+		if st.Kind() == K.Struct {
+			structType := st.StructType()
+			for _, f := range structType.Fields {
+				fieldName := f.Name.String()
+				_, isPK := IDorPrimaryKey(table_name, fieldName)
+				if isPK {
+					if pk_field != "" {
+						return Errf("%s multiple primary keys found", e)
+					}
+					pk_field = fieldName
+				}
+			}
+		}
+	}
+	if pk_field == "" {
+		return Errf("%s no primary key found", e)
+	}
 
 	for i, item := range items {
 
@@ -60,8 +79,9 @@ func (d *indexDB) Create(table_name string, items []interface{}) (err error) {
 
 				val, _ := fieldValue.Interface()
 
-				// Check if this is the ID field by name
-				if IsPrimaryKey(f.Name.String(), table_name) {
+				// Check if this is the primary key field
+				_, isPK := IDorPrimaryKey(table_name, f.Name.String())
+				if isPK {
 
 					m[pk_field] = val
 
@@ -73,54 +93,44 @@ func (d *indexDB) Create(table_name string, items []interface{}) (err error) {
 
 			}
 
-			d.data_in_any[i] = m
+			d.data[i] = m
 
 		}
 
 	}
 
 	// CHECK ID
-	for i, data := range d.data_in_any {
+	for i, data := range d.data {
 
 		id, id_exist := data[pk_field]
 
-		// d.Log("DATA table_name DB", table_name, "id_exist:", id_exist)
+		// d.Logger("DATA table_name DB", table_name, "id_exist:", id_exist)
 
 		if !id_exist || id.(string) == "" {
 			//agregar id al objeto si este no existe
 			id = d.GetNewID() //id nuevo
-			// d.Log("NUEVO ID GENERADO:", id)
-			if !Contains(id.(string), ".") {
-				return Errf("%s generated id does not contain user number", e)
-			}
+			// d.Logger("NUEVO ID GENERADO:", id)
 
 			data[pk_field] = id
 		}
 
 		// si todo esta ok retornamos el id
-		if len(d.data_in_str) != 0 { // se envió la data en string
-
-			d.data_in_str[i][pk_field] = id.(string)
-
-		} else { // se envió la data de tipo any
-
-			d.data_in_any[i][pk_field] = id.(string)
-		}
+		d.data[i][pk_field] = id.(string)
 	}
 
-	// fmt.Println("DATA IN INDEX DB:", d.data_in_any)
+	// fmt.Println("DATA IN INDEX DB:", d.data)
 
-	for _, data := range d.data_in_any {
+	for _, data := range d.data {
 
 		// Inserta cada elemento en el almacén de objetos
 		result := d.store.Call("add", data)
 		if result.IsNull() {
 			return Err("error creating element in db table:", table_name, "id:", data[pk_field].(string))
 		}
-		// d.Log("resultado:", result)
+		// d.Logger("resultado:", result)
 
 		// result.Call("addEventListener", "success", js.FuncOf(func(this js.Value, p []js.Value) interface{} {
-		// 	d.Log("Elemento creado con éxito:", data)
+		// 	d.Logger("Elemento creado con éxito:", data)
 		// 	return nil
 		// }))
 
@@ -129,7 +139,7 @@ func (d *indexDB) Create(table_name string, items []interface{}) (err error) {
 			// Log más detalles sobre el error
 			errorObject := p[0].Get("target").Get("error")
 			errorMessage := errorObject.Get("message").String()
-			d.Log("Error al crear elemento en la db tabla:", table_name, "id:", data[pk_field].(string), errorMessage)
+			d.logger("Error al crear elemento en la db tabla:", table_name, "id:", data[pk_field].(string), errorMessage)
 			return nil
 		}))
 

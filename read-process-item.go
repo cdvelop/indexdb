@@ -4,7 +4,7 @@ import (
 	"syscall/js"
 )
 
-func (d indexDB) processReadItem(p *ReadParams, data js.Value, r *ReadResults) {
+func (d IndexDB) processReadItem(p *ReadParams, data js.Value, r *ReadResults) {
 
 	out_any := make(map[string]interface{})
 	out_string := map[string]string{}

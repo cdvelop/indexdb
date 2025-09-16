@@ -5,7 +5,7 @@ import (
 	. "github.com/cdvelop/tinystring"
 )
 
-func (d *indexDB) Delete(table_name string, all_data ...interface{}) (err error) {
+func (d *IndexDB) Delete(table_name string, all_data ...interface{}) (err error) {
 
 	const e = "Delete"
 
@@ -27,8 +27,9 @@ func (d *indexDB) Delete(table_name string, all_data ...interface{}) (err error)
 
 			for j, f := range structType.Fields {
 
-				// Check if this is the ID field by name
-				if IsPrimaryKey(f.Name.String(), table_name) {
+				// Check if this is the primary key field
+				_, isPK := IDorPrimaryKey(table_name, f.Name.String())
+				if isPK {
 
 					fieldValue, _ := v.Field(j)
 

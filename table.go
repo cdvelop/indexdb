@@ -6,46 +6,54 @@ import (
 )
 
 // CreateTableIfNotExists creates a table for the given struct type if it doesn't exist
-func (d *indexDB) CreateTableIfNotExists(tableName string, structType interface{}) error {
+func (d *IndexDB) CreateTableIfNotExists(tableName string, structType any) error {
 	// Check if table already exists
 	if d.TableExist(tableName) {
 		return nil
 	}
 
 	// Create the table
-	return d.createTable(structType)
+	return d.createTable(tableName, structType)
 }
 
 // createTable creates a table for the given struct type
-func (d *indexDB) createTable(structType interface{}) error {
+func (d *IndexDB) createTable(tableName string, structType any) error {
 	st := tinyreflect.TypeOf(structType)
 
 	if st.Kind() == K.Struct {
 		structTypeInfo := st.StructType()
 
-		table_name := st.Name()
+		table_name := tableName
 
 		if len(structTypeInfo.Fields) != 0 {
-			pk_name := "id_" + table_name
+			// Find primary key field
+			pk_name := ""
+			for _, f := range structTypeInfo.Fields {
+				fieldName := f.Name.String()
+				_, isPK := IDorPrimaryKey(table_name, fieldName)
+				if isPK {
+					if pk_name != "" {
+						return Err("multiple primary keys found in struct")
+					}
+					pk_name = fieldName
+				}
+			}
+			if pk_name == "" {
+				return Err("no primary key found in struct")
+			}
 
 			// Create object store
 			newTable := d.db.Call("createObjectStore", table_name, map[string]interface{}{"keyPath": pk_name})
 
-			// Create indexes for fields
+			// Create indexes for all fields except primary key
 			for _, f := range structTypeInfo.Fields {
 				fieldName := f.Name.String()
-				tag := f.Tag().Get("db")
 
-				// Skip ID field (it's the keyPath)
-				if IsPrimaryKey(fieldName, table_name) {
-					continue
-				}
+				// Skip primary key field (it's the keyPath)
+				_, unique := IDorPrimaryKey(table_name, fieldName)
 
-				// Create index if field has db tag or is marked as unique
-				if tag != "" {
-					unique := tag == "unique"
-					newTable.Call("createIndex", fieldName, fieldName, map[string]interface{}{"unique": unique})
-				}
+				// Create index for the field
+				newTable.Call("createIndex", fieldName, fieldName, map[string]interface{}{"unique": unique})
 			}
 		}
 	}
@@ -54,7 +62,7 @@ func (d *indexDB) createTable(structType interface{}) error {
 }
 
 // TableExist checks if a table exists in the database
-func (d indexDB) TableExist(table_name string) bool {
+func (d IndexDB) TableExist(table_name string) bool {
 	// Get the list of object store names from the database
 	objectStoreNames := d.db.Get("objectStoreNames")
 	length := objectStoreNames.Length()
