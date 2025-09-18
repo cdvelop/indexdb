@@ -9,8 +9,8 @@ import (
 	"github.com/cdvelop/indexdb/tests"
 )
 
-// TestCreateTableIfNotExists tests the CreateTableIfNotExists function
-func TestCreateTableIfNotExists(t *testing.T) {
+// TestIndexDBCrudOperations tests basic CRUD operations in IndexDB
+func TestIndexDBCrudOperations(t *testing.T) {
 
 	logger := func(args ...any) {
 		t.Log(args...)
