@@ -5,7 +5,7 @@ go 1.24.4
 toolchain go1.24.6
 
 require (
-	github.com/cdvelop/tinyreflect v0.1.3
+	github.com/cdvelop/tinyreflect v0.2.0
 	github.com/cdvelop/tinystring v0.8.1
 )
 
