@@ -3,7 +3,7 @@ package indexdb
 import (
 	"syscall/js"
 
-	. "github.com/cdvelop/tinystring"
+	. "github.com/tinywasm/fmt"
 )
 
 func (d *IndexDB) ReadStringDataInDBold(r *ReadParams) (out []map[string]string, err error) {

@@ -1,7 +1,7 @@
 package indexdb
 
 import (
-	. "github.com/cdvelop/tinystring"
+	. "github.com/tinywasm/fmt"
 )
 
 func (d *IndexDB) fieldIndexOK(table, field_name string) (err error) {

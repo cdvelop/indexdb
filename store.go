@@ -1,7 +1,7 @@
 package indexdb
 
 import (
-	. "github.com/cdvelop/tinystring"
+	. "github.com/tinywasm/fmt"
 )
 
 // action create,read, delete, update

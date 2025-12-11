@@ -3,8 +3,8 @@ package indexdb
 import (
 	"syscall/js"
 
-	"github.com/cdvelop/tinyreflect"
-	. "github.com/cdvelop/tinystring"
+	"github.com/tinywasm/tinyreflect"
+	. "github.com/tinywasm/fmt"
 )
 
 var blob_exist bool

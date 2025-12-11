@@ -1,10 +1,10 @@
-module github.com/cdvelop/indexdb
+module github.com/tinywasm/indexdb
 
 go 1.25.2
 
 require (
-	github.com/cdvelop/tinyreflect v0.2.0
-	github.com/cdvelop/tinystring v0.11.0
+	github.com/tinywasm/fmt v0.12.2
+	github.com/tinywasm/tinyreflect v0.2.0
 )
 
-replace github.com/cdvelop/tinyreflect => ../tinyreflect
+replace github.com/tinywasm/tinyreflect => ../tinyreflect

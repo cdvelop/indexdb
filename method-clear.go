@@ -1,7 +1,7 @@
 package indexdb
 
 import (
-	. "github.com/cdvelop/tinystring"
+	. "github.com/tinywasm/fmt"
 )
 
 func (d *IndexDB) ClearAllTableDataInDB(tables ...string) (err error) {

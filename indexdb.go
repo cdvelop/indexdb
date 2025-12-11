@@ -3,7 +3,7 @@ package indexdb
 import (
 	"sync"
 
-	. "github.com/cdvelop/tinystring"
+	. "github.com/tinywasm/fmt"
 	"syscall/js"
 )
 

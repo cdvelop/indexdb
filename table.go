@@ -1,8 +1,8 @@
 package indexdb
 
 import (
-	"github.com/cdvelop/tinyreflect"
-	. "github.com/cdvelop/tinystring"
+	"github.com/tinywasm/tinyreflect"
+	. "github.com/tinywasm/fmt"
 )
 
 // CreateTableIfNotExists creates a table for the given struct type if it doesn't exist

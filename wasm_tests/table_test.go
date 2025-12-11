@@ -6,7 +6,7 @@ package wasmtests_test
 import (
 	"testing"
 
-	"github.com/cdvelop/indexdb/tests"
+	"github.com/tinywasm/indexdb/tests"
 )
 
 // TestIndexDBCrudOperations tests basic CRUD operations in IndexDB

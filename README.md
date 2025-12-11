@@ -1,5 +1,5 @@
 # indexdb
 implementación de index dB con Websassembly compilado con go (golang) 
 
-## [Contributing](https://github.com/cdvelop/cdvelop/blob/main/CONTRIBUTING.md)
+## [Contributing](https://github.com/tinywasm/cdvelop/blob/main/CONTRIBUTING.md)
 

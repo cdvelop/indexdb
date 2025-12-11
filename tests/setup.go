@@ -3,7 +3,7 @@ package tests
 import (
 	"fmt"
 
-	"github.com/cdvelop/indexdb"
+	"github.com/tinywasm/indexdb"
 )
 
 // idGenerator implements the idGenerator interface for testing
