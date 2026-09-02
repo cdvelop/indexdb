@@ -6,5 +6,5 @@ github.com/tinywasm/jsvalue v0.0.17 h1:HtbpFrsehiV1Bs3u8wH8Y1s8XXD7ns/R7njRnGT7S
 github.com/tinywasm/jsvalue v0.0.17/go.mod h1:Tq5eJXcAzr/H+Z5zsPR/cs1o/2ZrjxGTmGEedefmxok=
 github.com/tinywasm/model v0.1.4 h1:ZXz/LB9bUVzfiPO3R8iMDbZ6j2DCdR+rOV67zDaE7VE=
 github.com/tinywasm/model v0.1.4/go.mod h1:Cx/RTzSOH/DM2DtP6JqdhIRTDlf31EstTV5Y0RSp/dg=
-github.com/tinywasm/storage v0.0.2 h1:2z2w6Vpy5057mtvXWzK79F4XslJBvQl6GqAm+WacfyU=
-github.com/tinywasm/storage v0.0.2/go.mod h1:mF48cBANp2vWkgj2EbpurNY5QY4fYqpCTwbNaaLM5Ic=
+github.com/tinywasm/storage v0.0.6 h1:oVq7M2DtgOAbVaforOfqldMJanuXXCWSzGPFuLREWmo=
+github.com/tinywasm/storage v0.0.6/go.mod h1:C0aOrbutiiLKSL1WLc5hvAiEB4+v0BLh0Jv+W07YxzQ=
