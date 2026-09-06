@@ -6,12 +6,12 @@ import (
 	"sort"
 	"syscall/js"
 
-	"github.com/tinywasm/await"
-	"github.com/tinywasm/jsvalue"
+	"webtyp.com/await"
+	"webtyp.com/jsvalue"
 
-	"github.com/tinywasm/fmt"
-	. "github.com/tinywasm/model"
-	"github.com/tinywasm/storage"
+	"webtyp.com/fmt"
+	. "webtyp.com/model"
+	"webtyp.com/storage"
 )
 
 // execute implements storage.Adapter for IndexDB.

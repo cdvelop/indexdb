@@ -5,7 +5,7 @@ package tests_test
 import (
 	"testing"
 
-	"github.com/tinywasm/storage"
+	"webtyp.com/storage"
 )
 
 func TestExecuteActionNotImplemented(t *testing.T) {

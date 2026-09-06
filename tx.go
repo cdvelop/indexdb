@@ -5,7 +5,7 @@ package indexdb
 import (
 	"syscall/js"
 
-	"github.com/tinywasm/fmt"
+	"webtyp.com/fmt"
 )
 
 // processCursorRequest handles an IndexedDB cursor request (openCursor).

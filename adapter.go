@@ -6,9 +6,9 @@ import (
 	"sync"
 	"syscall/js"
 
-	"github.com/tinywasm/fmt"
-	. "github.com/tinywasm/model"
-	"github.com/tinywasm/storage"
+	"webtyp.com/fmt"
+	. "webtyp.com/model"
+	"webtyp.com/storage"
 )
 
 type adapter struct {

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/tinywasm/storage"
+	"webtyp.com/storage"
 )
 
 func TestGetStore_ExistingTable_Succeeds(t *testing.T) {
@@ -38,7 +38,7 @@ func TestGetStore_MissingTable_ReturnsError(t *testing.T) {
 		t.Fatal("Expected error for missing table, got nil")
 	}
 
-	// Case-insensitive check because tinywasm/fmt might translate words
+	// Case-insensitive check because webtyp/fmt might translate words
 	errMsg := strings.ToLower(err.Error())
 	if !strings.Contains(errMsg, "nonexistent") || !strings.Contains(errMsg, "not found") {
 		t.Errorf("Expected error message to contain 'nonexistent' and 'not found', got: %v", err.Error())

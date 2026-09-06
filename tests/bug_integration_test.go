@@ -5,9 +5,9 @@ package tests_test
 import (
 	"testing"
 
-	"github.com/tinywasm/indexdb"
-	. "github.com/tinywasm/model"
-	"github.com/tinywasm/storage"
+	"webtyp.com/indexdb"
+	. "webtyp.com/model"
+	"webtyp.com/storage"
 )
 
 // SimpleUser implements the Model interface for testing

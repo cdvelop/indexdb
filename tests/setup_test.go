@@ -5,9 +5,9 @@ package tests_test
 import (
 	"fmt"
 
-	"github.com/tinywasm/indexdb"
-	. "github.com/tinywasm/model"
-	"github.com/tinywasm/storage"
+	"webtyp.com/indexdb"
+	. "webtyp.com/model"
+	"webtyp.com/storage"
 )
 
 // idGenerator implements model.IDGenerator for testing

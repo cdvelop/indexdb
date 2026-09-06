@@ -5,8 +5,8 @@ package tests_test
 import (
 	"testing"
 
-	. "github.com/tinywasm/model"
-	"github.com/tinywasm/storage"
+	. "webtyp.com/model"
+	"webtyp.com/storage"
 )
 
 // TestIndexDBCrudOperations tests basic CRUD operations in IndexDB

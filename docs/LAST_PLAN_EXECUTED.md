@@ -1,5 +1,5 @@
 ---
-PLAN: "refactor: use tinywasm/await instead of jsvalue.AwaitRequest"
+PLAN: "refactor: use webtyp/await instead of jsvalue.AwaitRequest"
 TAG: v0.1.0
 EXECUTOR: jules
 REVIEWER: none
@@ -7,17 +7,17 @@ REVIEWER: none
 
 > This plan is dispatched via the CodeJob workflow. See skill: agents-workflow.
 
-# Plan — stop calling `jsvalue.AwaitRequest`; use `tinywasm/await`
+# Plan — stop calling `jsvalue.AwaitRequest`; use `webtyp/await`
 
 ## Why
 
 `execute.go` calls `jsvalue.AwaitRequest` six times. `jsvalue` is being cut
-down to a pure JS↔Go codec (`https://github.com/tinywasm/jsvalue/blob/main/docs/PLAN.md`)
+down to a pure JS↔Go codec (`https://github.com/webtyp/jsvalue/blob/main/docs/PLAN.md`)
 and no longer exports that function — it lives in
-`https://github.com/tinywasm/await/blob/main/docs/PLAN.md` as `await.Request`,
+`https://github.com/webtyp/await/blob/main/docs/PLAN.md` as `await.Request`,
 byte-for-byte the same behaviour.
 
-**Prerequisite: `github.com/tinywasm/await` must be released before this plan
+**Prerequisite: `webtyp.com/await` must be released before this plan
 starts.**
 
 ## What does NOT change
@@ -45,7 +45,7 @@ This plan's scope is exactly the six `jsvalue.AwaitRequest` call sites in
 ### 1. `go.mod`
 
 ```bash
-go get github.com/tinywasm/await@latest
+go get webtyp.com/await@latest
 go mod tidy
 ```
 
@@ -58,12 +58,12 @@ Replace the import and every call site:
 
 ```go
 // before
-import "github.com/tinywasm/jsvalue"
+import "webtyp.com/jsvalue"
 ...
 _, err = jsvalue.AwaitRequest(req)
 
 // after
-import "github.com/tinywasm/await"
+import "webtyp.com/await"
 ...
 _, err = await.Request(req)
 ```

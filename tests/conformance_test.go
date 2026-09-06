@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/tinywasm/model"
-	"github.com/tinywasm/storage"
-	dbconf "github.com/tinywasm/storage/conformance"
+	"webtyp.com/model"
+	"webtyp.com/storage"
+	dbconf "webtyp.com/storage/conformance"
 )
 
 func TestIndexDB_DBConformance(t *testing.T) {
