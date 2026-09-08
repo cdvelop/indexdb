@@ -10,4 +10,4 @@ require (
 	webtyp.com/storage v0.0.7
 )
 
-require webtyp.com/await v0.1.1
+require webtyp.com/await v0.1.2
